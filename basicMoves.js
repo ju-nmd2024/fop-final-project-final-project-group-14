@@ -53,9 +53,15 @@ class Paddle {
     this.width = 100;
   }
 
-  update(left, right) {
-    if (keyIsPressed(40)) {
-      this.x = this.x + 5;
+  update() {
+    if (keyIsDown(39)) {
+      if (this.x <= 600 - this.width / 2) {
+        this.x = this.x + 5;
+      }
+    } else if (keyIsDown(37)) {
+      if (this.x >= this.width / 2) {
+        this.x = this.x - 5;
+      }
     }
   }
 
@@ -76,8 +82,6 @@ function setup() {
 
 let ball = new Ball(400, 400);
 let paddle = new Paddle(200);
-let left = false;
-let right = false;
 
 function draw() {
   background(0, 0, 0);
@@ -93,14 +97,5 @@ function draw() {
   ball.update();
 
   paddle.display();
-
-  if (keyIsPressed(38)) {
-    left = true;
-  } else if (keyIsPressed(40)) {
-    right = true;
-  } else {
-    (left = false), (right = false);
-  }
-
   paddle.update();
 }
