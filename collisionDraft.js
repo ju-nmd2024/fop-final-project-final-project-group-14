@@ -7,7 +7,7 @@ class Block {
       this.x = x;
       this.y = y;
       this.randomColor = randomColor;
-      this.width = 80;
+      this.width = 450;
       this.height = 40;
     }
   
@@ -31,6 +31,8 @@ class Block {
     }
   }
   
+
+
   class Ball {
     constructor(x, y) {
       this.x = x;
@@ -40,10 +42,8 @@ class Block {
       this.stepY = 2;
     }
   
-    update() {
-      this.x = this.x + this.stepX;
-      this.y = this.y - this.stepY;
-  
+    collided(){
+
       // if the ball hits the sides it bounces
       if (this.x <= this.width/2 || this.x >= 600 - this.width/2) {
         this.stepX = this.stepX * -1;
@@ -53,6 +53,15 @@ class Block {
           this.y >= 600 - this.width/2) {
         this.stepY = this.stepY * -1;
       }
+    }
+
+
+    update() {
+      this.x = this.x + this.stepX;
+      this.y = this.y - this.stepY;
+  
+      
+      
     }
   
     display() {
@@ -98,6 +107,8 @@ class Block {
     }
   }
 
+
+
   function setup() {
     createCanvas(600, 600);
   }
@@ -106,26 +117,17 @@ class Block {
   let ball = new Ball(400, 400);
   let paddle = new Paddle(200);
   let start = false;
+  let block = new Block (100, 100);
   
   function draw() {
     background(0, 0, 0);
     
     
     //generate block in the Block class?
-    if (start === false){
-      for (let i = 0; i < 5; i++){
-        colors.push(Math.floor (Math.random() * 4));
-        }
-        start = true;
-    }
     
-    let count = 0;
-    for (let i = 0; i < 5; i++) {
-        let block = new Block(50 + 100 * i, 100, colors[count]);
-        blocks.push(block);
-        count++;
-        block.display();
-      }
+    block.display();
+    //block.update();
+
     
    /*  for (let block of blocks){
         if(ball.y >= block.y+block.height){
@@ -135,6 +137,7 @@ class Block {
     } */
   
     ball.display();
+    ball.collided();
     ball.update();
   
     paddle.display();
