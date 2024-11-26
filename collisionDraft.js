@@ -14,6 +14,10 @@ class Block {
     pop(); 
   } 
 
+  hitBall(x, y){
+    // return()
+  }
+
 } 
 
 class Paddle { 
@@ -43,7 +47,7 @@ class Paddle {
     this.width = 150; 
   } 
   smaller() { 
-    this.width = 150; 
+    this.width = 50; 
 
   } 
 
@@ -61,9 +65,15 @@ class Paddle {
 
   } 
 
-} 
+}  
 
- 
+class Player{
+  constructor(){ 
+    this.name = "";
+    this.score = 0;
+    this.life = 3;
+  }
+}
 
 class Ball { 
 
@@ -96,24 +106,31 @@ class Ball {
 
  
 
-  collision(paddle, blocks) { 
+  collision(paddle, blocks, player) { 
 
     for (let block of blocks) { 
 
       //ball inside block 
       if ( 
-        this.x > block.x && 
-        this.x < block.x + block.width && 
-        this.y < block.y + block.height && 
-        this.y > block.y 
+        this.x >= block.x && 
+        this.x <= block.x + block.width && 
+        this.y <= block.y + block.height && 
+        this.y >= block.y 
         ) { 
 
-          this.stepX = this.stepX * -1; 
-          blocks.splice(blocks.indexOf(block), 1); 
+          this.stepY = this.stepY * -1;
+          blocks.splice(blocks.indexOf(block), 1);
+          player.score++;
+          console.log(player.score);
+
+           /* if(){
+            this.stepY = this.stepY * -1;
+            blocks.splice(blocks.indexOf(block), 1); 
+          } else if(){
+            this.stepX = this.stepX * -1; 
+            blocks.splice(blocks.indexOf(block), 1); }   */
 
         } 
-        
-
       } 
 
 
@@ -150,14 +167,21 @@ class Ball {
 
   isDead() { 
     if (this.dead === true) {  
-        this.x=paddle.x; 
-        this.y=480; 
-        this.stepY=this.stepY * -1;
-        this.dead=false; 
+        player.life -=1;
+        if(player.life > 0){
+          this.x=paddle.x; 
+          this.y=480; 
+          this.stepY=this.stepY * -1;
+          this.dead=false;
+        } else {this.x=paddle.x; 
+                this.y=480;
+              }
 
   } 
  } 
 } 
+
+
 
 function setup() { 
   createCanvas(600, 600); 
@@ -168,11 +192,10 @@ function setup() {
 let ball = new Ball(400, 400); 
 let ball2= new Ball (400,400); 
 let paddle = new Paddle(200); 
+let player = new Player();
 let blocks = []; 
-let start = true; 
-
- 
-
+let gameState = "start"; 
+let lives = 3;
  
 
 function gridBlocks() { 
@@ -185,18 +208,7 @@ function gridBlocks() {
   } 
 } 
 
- 
-
-function draw() { 
- background(0, 0, 0); 
-
-  if (start === true) { 
-    gridBlocks(); 
-    start = false; 
-  } 
-
- 
-
+function gamePage(){
   let count = 0; 
 
   for (let block of blocks) { 
@@ -209,8 +221,8 @@ function draw() {
   } 
 
   ball.display(); 
-  ball.collision(paddle, blocks); 
- 
+  ball.collision(paddle, blocks, player); 
+  
 
   ball.isDead(); 
   ball.update(); 
@@ -219,7 +231,19 @@ function draw() {
   paddle.display(); 
   paddle.update(); 
   //paddle.bigger(); 
-
   //paddle.smaller(); 
 
+} 
+
+
+function draw() { 
+ background(0, 0, 0); 
+
+  if (gameState === "start") { 
+    gridBlocks(); 
+    gameState = "game"; 
+  } else if (gameState === "game") { 
+      gamePage();
+  } else {}
+  
 } 
