@@ -14,6 +14,10 @@ class Block {
     pop(); 
   } 
 
+  hitBall(x, y){
+    // return()
+  }
+
 } 
 
 class Paddle { 
@@ -61,12 +65,13 @@ class Paddle {
 
   } 
 
-} 
+}  
 
 class Player{
-  constructor(){
+  constructor(){ 
     this.name = "";
     this.score = 0;
+    this.life = 3;
   }
 }
 
@@ -162,10 +167,15 @@ class Ball {
 
   isDead() { 
     if (this.dead === true) {  
-        this.x=paddle.x; 
-        this.y=480; 
-        this.stepY=this.stepY * -1;
-        this.dead=false; 
+        player.life -=1;
+        if(player.life > 0){
+          this.x=paddle.x; 
+          this.y=480; 
+          this.stepY=this.stepY * -1;
+          this.dead=false;
+        } else {this.x=paddle.x; 
+                this.y=480;
+              }
 
   } 
  } 
@@ -184,10 +194,8 @@ let ball2= new Ball (400,400);
 let paddle = new Paddle(200); 
 let player = new Player();
 let blocks = []; 
-let start = true; 
+let gameState = "start"; 
 let lives = 3;
- 
-
  
 
 function gridBlocks() { 
@@ -200,18 +208,7 @@ function gridBlocks() {
   } 
 } 
 
- 
-
-function draw() { 
- background(0, 0, 0); 
-
-  if (start === true) { 
-    gridBlocks(); 
-    start = false; 
-  } 
-
- 
-
+function gamePage(){
   let count = 0; 
 
   for (let block of blocks) { 
@@ -236,4 +233,17 @@ function draw() {
   //paddle.bigger(); 
   //paddle.smaller(); 
 
+} 
+
+
+function draw() { 
+ background(0, 0, 0); 
+
+  if (gameState === "start") { 
+    gridBlocks(); 
+    gameState = "game"; 
+  } else if (gameState === "game") { 
+      gamePage();
+  } else {}
+  
 } 
