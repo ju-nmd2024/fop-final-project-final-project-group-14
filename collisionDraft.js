@@ -43,7 +43,7 @@ class Paddle {
     this.width = 150; 
   } 
   smaller() { 
-    this.width = 150; 
+    this.width = 50; 
 
   } 
 
@@ -63,7 +63,12 @@ class Paddle {
 
 } 
 
- 
+class Player{
+  constructor(){
+    this.name = "";
+    this.score = 0;
+  }
+}
 
 class Ball { 
 
@@ -96,24 +101,31 @@ class Ball {
 
  
 
-  collision(paddle, blocks) { 
+  collision(paddle, blocks, player) { 
 
     for (let block of blocks) { 
 
       //ball inside block 
       if ( 
-        this.x > block.x && 
-        this.x < block.x + block.width && 
-        this.y < block.y + block.height && 
-        this.y > block.y 
+        this.x >= block.x && 
+        this.x <= block.x + block.width && 
+        this.y <= block.y + block.height && 
+        this.y >= block.y 
         ) { 
 
-          this.stepX = this.stepX * -1; 
-          blocks.splice(blocks.indexOf(block), 1); 
+          this.stepY = this.stepY * -1;
+          blocks.splice(blocks.indexOf(block), 1);
+          player.score++;
+          console.log(player.score);
+
+           /* if(){
+            this.stepY = this.stepY * -1;
+            blocks.splice(blocks.indexOf(block), 1); 
+          } else if(){
+            this.stepX = this.stepX * -1; 
+            blocks.splice(blocks.indexOf(block), 1); }   */
 
         } 
-        
-
       } 
 
 
@@ -159,6 +171,8 @@ class Ball {
  } 
 } 
 
+
+
 function setup() { 
   createCanvas(600, 600); 
 } 
@@ -168,9 +182,10 @@ function setup() {
 let ball = new Ball(400, 400); 
 let ball2= new Ball (400,400); 
 let paddle = new Paddle(200); 
+let player = new Player();
 let blocks = []; 
 let start = true; 
-
+let lives = 3;
  
 
  
@@ -209,8 +224,8 @@ function draw() {
   } 
 
   ball.display(); 
-  ball.collision(paddle, blocks); 
- 
+  ball.collision(paddle, blocks, player); 
+  
 
   ball.isDead(); 
   ball.update(); 
@@ -219,7 +234,6 @@ function draw() {
   paddle.display(); 
   paddle.update(); 
   //paddle.bigger(); 
-
   //paddle.smaller(); 
 
 } 
