@@ -2,6 +2,7 @@ let rectX = 100;
 let rectY = 250;
 let roofDetailX = 200;
 let roofDetailY = 250;
+let roofPeak = 100;
 // let rectRedX = 150;
 // let rectRedY = 300;
 
@@ -19,6 +20,16 @@ function tentBackground(rectX, rectY) {
     rect(rectX + 50, rectY, 50, 700);
 }
 
+function roofTop(){
+    fill(240, 240, 240);
+    triangle(100, 250, 300, 250, 600, roofPeak);
+    triangle(500, 250, 700, 250, 600, roofPeak);
+    triangle(900, 250, 1100, 250, 600, roofPeak);
+    fill(120, 10, 10);
+    triangle(300, 250, 500, 250, 600, roofPeak);
+    triangle(700, 250, 900, 250, 600, roofPeak);
+}
+
 function roofDetail(roofDetailX, roofDetailY) {
     fill(220, 220, 220);
     arc(roofDetailX, roofDetailY, 100, 80, 0, + PI);
@@ -34,5 +45,7 @@ function draw () {
     for (let i = 0; i < 7; i++) {
         roofDetail(roofDetailX * i, roofDetailY);
     }
+
+    roofTop();
 
 }
