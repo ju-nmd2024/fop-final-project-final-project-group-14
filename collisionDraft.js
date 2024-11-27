@@ -13,6 +13,7 @@ class Block {
     if (this.isActive) {
       translate(this.x, this.y);
 
+      // Different colors for different number of hits needed to deactivate
       if (this.hitPoint === 1) {
         fill(255, 255, 255);
       } else if (this.hitPoint === 2) {
@@ -107,14 +108,12 @@ class Ball {
     this.x = this.x + Math.cos(this.angle) * this.speed;
     this.y = this.y + Math.sin(this.angle) * this.speed;
 
-    // wall collisions
+    // Left or right wall collision
     if (this.x < this.r || this.x > 600 - this.r) {
-      // Left or right wall
       this.angle = PI - this.angle;
     }
-
+    // Top or bottom wall collision
     if (this.y < this.r || this.y > 600 - this.r) {
-      // Top or bottom wall (horizontal collision)
       this.angle = -this.angle;
     }
   }
@@ -127,19 +126,21 @@ class Ball {
     pop();
   }
 
+  //change orizontal direction
   directionX() {
     this.angle = PI - this.angle;
   }
-
+  //change vertical direction
   directionY() {
     this.angle = -this.angle;
   }
 }
 
+//calculates a random angle for the start of the ball
 function randomAngle() {
-  return Math.floor(
-    Math.random() * (2 * PI - QUARTER_PI - (PI + QUARTER_PI)) +
-      (PI + QUARTER_PI)
+  return (
+    Math.random() *
+    (2 * PI - QUARTER_PI - (PI + QUARTER_PI) + (PI + QUARTER_PI))
   );
 }
 
@@ -153,62 +154,69 @@ let ball = new Ball(paddle.x, 480, randomAngle());
 let player = new Player();
 let blocks = [];
 let gameState = "start";
+let row = 5;
+let column = 10;
 
 function gridBlocks() {
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < column; i++) {
     blocks[i] = [];
-    for (let j = 0; j < 5; j++) {
-      blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, 5 - j);
+    for (let j = 0; j < row; j++) {
+      blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, 4);
     }
   }
 }
+
 function gamePage() {
-  for (let i = 0; i < 10; i++) {
-    for (let j = 0; j < 5; j++) {
+  for (let i = 0; i < column; i++) {
+    for (let j = 0; j < row; j++) {
       let block = blocks[i][j];
+      //if the block is hit
       if (block.isActive && block.hit(ball)) {
-        console.log(block.hitPoint);
-        if (block.hitPoint > 1) {
-          block.hitPoint--;
-        } else {
-          block.isActive = false;
+        // decrease hit point
+        block.hitPoint -= 1;
 
-          let overlapLeft = ball.x + ball.r - block.x;
-          let overlapRight = block.x + block.width - (ball.x - ball.r);
-          let overlapTop = ball.y + ball.r - block.y;
-          let overlapBottom = block.y + block.height - (ball.y - ball.r);
+        // calculate overlaps
+        let overlapLeft = ball.x + ball.r - block.x;
+        let overlapRight = block.x + block.width - (ball.x - ball.r);
+        let overlapTop = ball.y + ball.r - block.y;
+        let overlapBottom = block.y + block.height - (ball.y - ball.r);
 
-          // Find the smallest overlap to determine the collision side
-          let minOverlap = Math.min(
-            overlapLeft,
-            overlapRight,
-            overlapTop,
-            overlapBottom
-          );
+        // find the smallest overlap to determine collision side
+        let minOverlap = Math.min(
+          overlapLeft,
+          overlapRight,
+          overlapTop,
+          overlapBottom
+        );
 
-          if (minOverlap === overlapTop || minOverlap === overlapBottom) {
-            // Top or bottom collision
-            ball.directionY();
-          } else if (
-            minOverlap === overlapLeft ||
-            minOverlap === overlapRight
-          ) {
-            // Left or right collision
-            ball.directionX();
-          }
+        if (minOverlap === overlapTop || minOverlap === overlapBottom) {
+          ball.directionY(); // Top or bottom collision
+        } else if (minOverlap === overlapLeft || minOverlap === overlapRight) {
+          ball.directionX(); // Left or right collision
         }
-      } else {
+
+        // Deactivate block if no hits remain
+        if (block.hitPoint <= 0) {
+          block.isActive = false;
+        }
+      }
+
+      // Display the block if it's active
+      if (block.isActive) {
         block.display();
-        fill(255, 0, 0);
       }
     }
   }
-  //brick.hitBall(ball);
 
   ball.display();
   paddle.display();
   paddle.update();
 
+  if (ball.y > paddle.y) {
+    ball.x = paddle.x;
+    ball.y = 480;
+    ball.angle = randomAngle();
+  }
   if (paddle.hit(ball) === true) {
     ball.directionY();
   }
