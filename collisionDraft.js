@@ -6,6 +6,7 @@ class Block {
     this.width = 50;
     this.height = 50;
     this.isActive = true;
+    this.justHit = false;
   }
 
   display() {
@@ -144,6 +145,27 @@ function randomAngle() {
   );
 }
 
+class PowerUp {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.number = Math.floor(Math.random() * 5);
+    this.isActive = false;
+  }
+
+  update() {
+    this.y = this.y + 5;
+  }
+
+  display() {
+    push();
+    translate(this.x, this.y);
+    fill(255, 0, 255);
+    ellipse(0, 0, 30);
+    pop();
+  }
+}
+
 function setup() {
   createCanvas(600, 600);
 }
@@ -156,6 +178,9 @@ let blocks = [];
 let gameState = "start";
 let row = 5;
 let column = 10;
+let powerUp = new PowerUp(50, 50);
+let specialRow = Math.floor(Math.random() * row);
+let specialColumn = Math.floor(Math.random() * column);
 
 function gridBlocks() {
   for (let i = 0; i < column; i++) {
@@ -166,13 +191,16 @@ function gridBlocks() {
   }
 }
 
-function gamePage() {
+function gamePage(specialBlock) {
+  specialBlock = blocks[1][4];
+
   for (let i = 0; i < column; i++) {
     for (let j = 0; j < row; j++) {
       let block = blocks[i][j];
       //if the block is hit
-      if (block.isActive && block.hit(ball)) {
+      if (block.isActive && block.hit(ball) && block.justHit === false) {
         // decrease hit point
+        block.justHit = true;
         block.hitPoint -= 1;
 
         // calculate overlaps
@@ -195,6 +223,12 @@ function gamePage() {
           ball.directionX(); // Left or right collision
         }
 
+        if (block === specialBlock) {
+          powerUp.x = specialBlock.x + specialBlock.width / 2;
+          powerUp.y = specialBlock.y + specialBlock.height / 2;
+          powerUp.isActive = true;
+        }
+
         // Deactivate block if no hits remain
         if (block.hitPoint <= 0) {
           block.isActive = false;
@@ -205,6 +239,7 @@ function gamePage() {
       if (block.isActive) {
         block.display();
       }
+      block.justHit = false;
     }
   }
 
@@ -224,6 +259,11 @@ function gamePage() {
   ball.update();
   //paddle.bigger();
   //paddle.smaller();
+
+  if (powerUp.isActive) {
+    powerUp.display();
+    powerUp.update();
+  }
 }
 
 function draw() {
@@ -231,6 +271,7 @@ function draw() {
 
   if (gameState === "start") {
     gridBlocks();
+
     gameState = "game";
   } else if (gameState === "game") {
     gamePage();
