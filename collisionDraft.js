@@ -1,17 +1,24 @@
 class Block {
-  constructor(x, y) {
+  constructor(x, y, hitPoint) {
     this.x = x;
     this.y = y;
+    this.hitPoint = hitPoint;
     this.width = 50;
     this.height = 50;
     this.isActive = true;
   }
 
   display() {
+    push();
     if (this.isActive) {
-      push();
       translate(this.x, this.y);
       fill(255, 255, 255);
+      if (this.hitPoint > 1) {
+        fill(255, 0, 0);
+      }
+      if (this.hitPoint > 2) {
+        fill(0, 255, 0);
+      }
       rect(0, 0, this.width, this.height, 10);
       pop();
     }
@@ -146,44 +153,53 @@ let gameState = "start";
 
 function gridBlocks() {
   for (let i = 0; i < 10; i++) {
+    blocks[i] = [];
     for (let j = 0; j < 5; j++) {
-      let block = new Block(50 + 50 * i, 100 + 50 * j);
-      blocks.push(block);
+      blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, 3 - j);
     }
   }
 }
 
 function gamePage() {
-  for (let block of blocks) {
-    if (block.isActive && block.hit(ball)) {
-      block.isActive = false;
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 5; j++) {
+      let block = blocks[i][j];
+      if (block.isActive && block.hit(ball)) {
+        if (block.hitPoint >= 1) {
+          block.hitPoint--;
+        } else {
+          block.isActive = false;
 
-      let overlapLeft = ball.x + ball.r - block.x;
-      let overlapRight = block.x + block.width - (ball.x - ball.r);
-      let overlapTop = ball.y + ball.r - block.y;
-      let overlapBottom = block.y + block.height - (ball.y - ball.r);
+          let overlapLeft = ball.x + ball.r - block.x;
+          let overlapRight = block.x + block.width - (ball.x - ball.r);
+          let overlapTop = ball.y + ball.r - block.y;
+          let overlapBottom = block.y + block.height - (ball.y - ball.r);
 
-      // Find the smallest overlap to determine the collision side
-      let minOverlap = Math.min(
-        overlapLeft,
-        overlapRight,
-        overlapTop,
-        overlapBottom
-      );
+          // Find the smallest overlap to determine the collision side
+          let minOverlap = Math.min(
+            overlapLeft,
+            overlapRight,
+            overlapTop,
+            overlapBottom
+          );
 
-      if (minOverlap === overlapTop || minOverlap === overlapBottom) {
-        // Top or bottom collision
-        ball.directionY();
-      } else if (minOverlap === overlapLeft || minOverlap === overlapRight) {
-        // Left or right collision
-        ball.directionX();
+          if (minOverlap === overlapTop || minOverlap === overlapBottom) {
+            // Top or bottom collision
+            ball.directionY();
+          } else if (
+            minOverlap === overlapLeft ||
+            minOverlap === overlapRight
+          ) {
+            // Left or right collision
+            ball.directionX();
+          }
+        }
+      } else {
+        block.display();
+        fill(255, 0, 0);
       }
-    } else {
-      block.display();
-      fill(255, 0, 0);
     }
   }
-
   //brick.hitBall(ball);
 
   ball.display();
