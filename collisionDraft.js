@@ -12,12 +12,15 @@ class Block {
     push();
     if (this.isActive) {
       translate(this.x, this.y);
-      fill(255, 255, 255);
-      if (this.hitPoint > 1) {
+
+      if (this.hitPoint === 1) {
+        fill(255, 255, 255);
+      } else if (this.hitPoint === 2) {
         fill(255, 0, 0);
-      }
-      if (this.hitPoint > 2) {
+      } else if (this.hitPoint === 3) {
         fill(0, 255, 0);
+      } else if (this.hitPoint > 3) {
+        fill(0, 0, 255);
       }
       rect(0, 0, this.width, this.height, 10);
       pop();
@@ -155,17 +158,17 @@ function gridBlocks() {
   for (let i = 0; i < 10; i++) {
     blocks[i] = [];
     for (let j = 0; j < 5; j++) {
-      blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, 3 - j);
+      blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, 5 - j);
     }
   }
 }
-
 function gamePage() {
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 5; j++) {
       let block = blocks[i][j];
       if (block.isActive && block.hit(ball)) {
-        if (block.hitPoint >= 1) {
+        console.log(block.hitPoint);
+        if (block.hitPoint > 1) {
           block.hitPoint--;
         } else {
           block.isActive = false;
