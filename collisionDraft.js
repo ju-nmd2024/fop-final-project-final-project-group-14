@@ -146,6 +146,11 @@ class PowerUp {
     this.x = x;
     this.y = y;
     this.r = 15;
+    this.number = 0;
+    this.isActive = false;
+  }
+
+  generate(){
     this.number = Math.floor(Math.random() * 4);
     this.isActive = false;
   }
@@ -222,6 +227,7 @@ let row = 5;
 let column = 10;
 let powerUp = new PowerUp(50, 50);
 
+
 function generateBall(n) {
   for (let i = 0; i < n; i++) {
     balls[i] = new Ball(paddle.x, 480, randomAngle());
@@ -229,17 +235,25 @@ function generateBall(n) {
 }
 
 function gridBlocks() {
-  let special = Math.floor(Math.random() * (row * column));
+  let specialIndexes = [];
+
+  // Generate unique random indices for special blocks
+  while (specialIndexes.length < 6) {
+    let specialIndex = Math.floor(Math.random() * (row * column));
+      specialIndexes.push(specialIndex);
+    }
+  
+  //let special = Math.floor(Math.random() * (row * column));
   let count = 0;
   for (let i = 0; i < column; i++) {
     blocks[i] = [];
     for (let j = 0; j < row; j++) {
       blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, 4);
       count++;
-      if (special === count) {
+      if (specialIndexes.includes(count)) {
         blocks[i][j].isSpecial = true;
-      }
-    }
+      }  
+    } 
   }
 }
 
@@ -279,6 +293,7 @@ function checkCollision(ball) {
           block.isActive = false;
           // if the block is the special one, drop the powerUp
           if (block.isSpecial) {
+            powerUp.generate();
             powerUp.x = block.x + block.width / 2;
             powerUp.y = block.y + block.height / 2;
             powerUp.isActive = true;
@@ -297,12 +312,10 @@ function checkCollision(ball) {
 }
 
 function gamePage() {
-  /* checkCollision(ball);
-  checkCollision(ball2);
- */
 
   for (let ball of balls) {
     checkCollision(ball);
+    
   }
 
   paddle.display();
@@ -324,19 +337,7 @@ function gamePage() {
   paddle.display();
   paddle.update();
 
-  /*  if (ball.y > paddle.y) {
-    ball.x = paddle.x;
-    ball.y = 480;
-    ball.angle = randomAngle();
-  }
-  if (paddle.hit(ball) === true) {
-    ball.directionY();
-  }
-  if (paddle.hit(ball2) === true) {
-    ball2.directionY();
-  }
- */
-
+// cathc the powerUp with the paddle
   if (paddle.hit(powerUp) === true && powerUp.isActive === true) {
     powerUp.isActive = false;
 
@@ -344,8 +345,8 @@ function gamePage() {
       paddle.bigger();
     } else if (powerUp.number === 1) {
       paddle.smaller();
-    } else if (powerUp.number === 2) {
-      paddle.smaller();
+    } else if (powerUp.number >= 0 ) {
+      generateBall(3);
     }
 
     // re-set just hit flag
@@ -368,10 +369,6 @@ function gamePage() {
     powerUp.update();
   }
 
-  if (powerUp.isActive) {
-    powerUp.display();
-    powerUp.update();
-  }
 
   if (paddle.hit(food) === true && food.isActive === true) {
     food.isActive = false;
@@ -380,7 +377,7 @@ function gamePage() {
   if (food.isActive) {
     food.display();
     food.update();
-  }
+  } 
 }
 
 function draw() {
@@ -388,6 +385,7 @@ function draw() {
 
   if (gameState === "start") {
     gridBlocks();
+    generateBall(1);
 
     gameState = "game";
   } else if (gameState === "game") {
