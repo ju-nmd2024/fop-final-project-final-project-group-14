@@ -1,14 +1,13 @@
 let rectX = 100;
 let rectY = 250;
-let roofDetailX = 200;
-let roofDetailY = 250;
+let roofDetailWhiteX = 200;
+let roofDetailWhiteY = 250;
+let roofDetailRedX = 100;
+let roofDetailRedY = 250;
 let roofPeak = 100;
-// let rectRedX = 150;
-// let rectRedY = 300;
-
 
 function setup(){
-    createCanvas(1200, 900);
+    createCanvas(1200, 800);
     background(255, 255, 255);
 }
  
@@ -30,11 +29,14 @@ function roofTop(){
     triangle(700, 250, 900, 250, 600, roofPeak);
 }
 
-function roofDetail(roofDetailX, roofDetailY) {
+function roofDetailWhite(roofDetailWhiteX, roofDetailWhiteY) {
     fill(220, 220, 220);
-    arc(roofDetailX, roofDetailY, 100, 80, 0, + PI);
+    arc(roofDetailWhiteX, roofDetailWhiteY, 100, 80, 0, + PI);
+}
+
+function roofDetailRed(roofDetailRedX, roofDetailRedY){
     fill(100, 10, 10);
-    arc(roofDetailX + 100, roofDetailY, 100, 80, 0, + PI);
+    arc(roofDetailRedX, roofDetailRedY, 100, 80, 0, + PI);
 }
 
 function draw () {
@@ -42,9 +44,14 @@ function draw () {
         tentBackground(rectX * i, rectY);
     }
 
-    for (let i = 0; i < 7; i++) {
-        roofDetail(roofDetailX * i, roofDetailY);
+    for (let i = 0; i < 6; i++) {
+        roofDetailWhite(roofDetailWhiteX * i, roofDetailWhiteY);
     }
+
+    for (let i = 0; i < 6; i++) {
+        roofDetailRed(roofDetailRedX * i * 2, roofDetailRedY); 
+    }
+
 
     roofTop();
 
