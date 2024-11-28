@@ -61,11 +61,11 @@ class Paddle {
 
   //paddle collision
 
-  hit(ball) {
+  hit(object) {
     return (
-      ball.y + ball.r >= this.y &&
-      ball.x <= this.x + this.width / 2 &&
-      ball.x >= this.x - this.width / 2
+      object.y + object.r >= this.y &&
+      object.x <= this.x + this.width / 2 &&
+      object.x >= this.x - this.width / 2
     );
   }
 
@@ -137,43 +137,81 @@ class Ball {
   }
 }
 
-//calculates a random angle for the start of the ball
-function randomAngle() {
-  return (
-    Math.random() *
-    (2 * PI - QUARTER_PI - (PI + QUARTER_PI) + (PI + QUARTER_PI))
-  );
-}
-
 class PowerUp {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.number = Math.floor(Math.random() * 5);
+    this.r = 15;
+    this.number = Math.floor(Math.random() * 4);
     this.isActive = false;
   }
 
   update() {
-    this.y = this.y + 5;
+    this.y = this.y + 2;
   }
 
   display() {
     push();
     translate(this.x, this.y);
-    fill(255, 0, 255);
-    ellipse(0, 0, 30);
+    if (this.number === 0) {
+      fill(255, 0, 255);
+    } else if (this.number === 1) {
+      fill(255, 200, 0);
+    } else if (this.number === 2) {
+      fill(100, 0, 250);
+    } else if (this.number === 3) {
+      fill(0, 250, 250);
+    }
+    ellipse(0, 0, this.r * 2);
     pop();
   }
+}
+
+class Food {
+  constructor() {
+    this.x = 0;
+    this.y = 300;
+    this.r = 20;
+    this.stepX = 2;
+    this.stepY = 2;
+    this.isActive = true;
+  }
+  update() {
+    this.x = this.x + this.stepX;
+    this.y = this.y + this.stepY;
+
+    if (this.y > 600) {
+      this.isActive = false;
+    }
+  }
+  display() {
+    if (this.isActive === true) {
+      push();
+      translate(this.x, this.y);
+      fill(255, 120, 0);
+      ellipse(0, 0, this.r * 2);
+      pop();
+    }
+  }
+}
+
+//calculates a random angle for the start of the ball
+function randomAngle() {
+  return 4.5; /* (
+    Math.random() *
+    (2 * PI - QUARTER_PI - (PI + QUARTER_PI) + (PI + QUARTER_PI))
+  ); */
 }
 
 function setup() {
   createCanvas(600, 600);
 }
 
-let ball2 = new Ball(400, 400);
 let paddle = new Paddle(150);
 let ball = new Ball(paddle.x, 480, randomAngle());
+let ball2 = new Ball(paddle.x, 480, randomAngle());
 let player = new Player();
+let food = new Food();
 let blocks = [];
 let gameState = "start";
 let row = 5;
@@ -191,16 +229,16 @@ function gridBlocks() {
   }
 }
 
-function gamePage(specialBlock) {
+function checkCollision(ball) {
   specialBlock = blocks[1][4];
-
   for (let i = 0; i < column; i++) {
     for (let j = 0; j < row; j++) {
       let block = blocks[i][j];
       //if the block is hit
       if (block.isActive && block.hit(ball) && block.justHit === false) {
-        // decrease hit point
+        // flag so you cant hit it repeatedly in same frame
         block.justHit = true;
+        //decrease hit point
         block.hitPoint -= 1;
 
         // calculate overlaps
@@ -223,15 +261,15 @@ function gamePage(specialBlock) {
           ball.directionX(); // Left or right collision
         }
 
-        if (block === specialBlock) {
-          powerUp.x = specialBlock.x + specialBlock.width / 2;
-          powerUp.y = specialBlock.y + specialBlock.height / 2;
-          powerUp.isActive = true;
-        }
-
         // Deactivate block if no hits remain
         if (block.hitPoint <= 0) {
           block.isActive = false;
+          // if the block is the special one, drop the powerUp
+          if (block === specialBlock) {
+            powerUp.x = specialBlock.x + specialBlock.width / 2;
+            powerUp.y = specialBlock.y + specialBlock.height / 2;
+            powerUp.isActive = true;
+          }
         }
       }
 
@@ -239,11 +277,18 @@ function gamePage(specialBlock) {
       if (block.isActive) {
         block.display();
       }
+      //reset just hit flag
       block.justHit = false;
     }
   }
+}
+
+function gamePage(specialBlock) {
+  checkCollision(ball);
+  checkCollision(ball2);
 
   ball.display();
+  ball2.display();
   paddle.display();
   paddle.update();
 
@@ -255,14 +300,44 @@ function gamePage(specialBlock) {
   if (paddle.hit(ball) === true) {
     ball.directionY();
   }
+  if (paddle.hit(ball2) === true) {
+    ball2.directionY();
+  }
+
+  if (paddle.hit(powerUp) === true && powerUp.isActive === true) {
+    powerUp.isActive = false;
+
+    if (powerUp.number === 0) {
+      paddle.bigger();
+    } else if (powerUp.number === 1) {
+      paddle.smaller();
+    } else if (powerUp.number === 2) {
+      paddle.smaller();
+    }
+  }
 
   ball.update();
+  ball2.update();
   //paddle.bigger();
   //paddle.smaller();
 
   if (powerUp.isActive) {
     powerUp.display();
     powerUp.update();
+  }
+
+  if (powerUp.isActive) {
+    powerUp.display();
+    powerUp.update();
+  }
+
+  if (paddle.hit(food) === true && food.isActive === true) {
+    food.isActive = false;
+    //score decrease
+  }
+  if (food.isActive) {
+    food.display();
+    food.update();
   }
 }
 
