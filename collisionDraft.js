@@ -7,6 +7,7 @@ class Block {
     this.height = 50;
     this.isActive = true;
     this.justHit = false;
+    this.isSpecial = false;
   }
 
   display() {
@@ -23,6 +24,9 @@ class Block {
         fill(0, 255, 0);
       } else if (this.hitPoint > 3) {
         fill(0, 0, 255);
+      }
+      if (this.isSpecial) {
+        fill(255, 255, 0);
       }
       rect(0, 0, this.width, this.height, 10);
       pop();
@@ -208,29 +212,38 @@ function setup() {
 }
 
 let paddle = new Paddle(150);
-let ball = new Ball(paddle.x, 480, randomAngle());
 let ball2 = new Ball(paddle.x, 480, randomAngle());
 let player = new Player();
 let food = new Food();
 let blocks = [];
+let balls = [];
 let gameState = "start";
 let row = 5;
 let column = 10;
 let powerUp = new PowerUp(50, 50);
-let specialRow = Math.floor(Math.random() * row);
-let specialColumn = Math.floor(Math.random() * column);
+
+function generateBall(n) {
+  for (let i = 0; i < n; i++) {
+    balls[i] = new Ball(paddle.x, 480, randomAngle());
+  }
+}
 
 function gridBlocks() {
+  let special = Math.floor(Math.random() * (row * column));
+  let count = 0;
   for (let i = 0; i < column; i++) {
     blocks[i] = [];
     for (let j = 0; j < row; j++) {
       blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, 4);
+      count++;
+      if (special === count) {
+        blocks[i][j].isSpecial = true;
+      }
     }
   }
 }
 
 function checkCollision(ball) {
-  specialBlock = blocks[1][4];
   for (let i = 0; i < column; i++) {
     for (let j = 0; j < row; j++) {
       let block = blocks[i][j];
@@ -265,9 +278,9 @@ function checkCollision(ball) {
         if (block.hitPoint <= 0) {
           block.isActive = false;
           // if the block is the special one, drop the powerUp
-          if (block === specialBlock) {
-            powerUp.x = specialBlock.x + specialBlock.width / 2;
-            powerUp.y = specialBlock.y + specialBlock.height / 2;
+          if (block.isSpecial) {
+            powerUp.x = block.x + block.width / 2;
+            powerUp.y = block.y + block.height / 2;
             powerUp.isActive = true;
           }
         }
@@ -283,16 +296,35 @@ function checkCollision(ball) {
   }
 }
 
-function gamePage(specialBlock) {
-  checkCollision(ball);
+function gamePage() {
+  /* checkCollision(ball);
   checkCollision(ball2);
+ */
 
-  ball.display();
-  ball2.display();
+  for (let ball of balls) {
+    checkCollision(ball);
+  }
+
   paddle.display();
   paddle.update();
 
-  if (ball.y > paddle.y) {
+  for (let ball of balls) {
+    ball.display();
+    if (ball.y > paddle.y) {
+      ball.x = paddle.x;
+      ball.y = 480;
+      ball.angle = randomAngle();
+    }
+    if (paddle.hit(ball) === true) {
+      ball.directionY();
+    }
+    ball.update();
+  }
+
+  paddle.display();
+  paddle.update();
+
+  /*  if (ball.y > paddle.y) {
     ball.x = paddle.x;
     ball.y = 480;
     ball.angle = randomAngle();
@@ -303,6 +335,7 @@ function gamePage(specialBlock) {
   if (paddle.hit(ball2) === true) {
     ball2.directionY();
   }
+ */
 
   if (paddle.hit(powerUp) === true && powerUp.isActive === true) {
     powerUp.isActive = false;
@@ -314,10 +347,19 @@ function gamePage(specialBlock) {
     } else if (powerUp.number === 2) {
       paddle.smaller();
     }
+
+    // re-set just hit flag
+    if (frameCount % 10 === 0) {
+      for (let i = 0; i < column; i++) {
+        for (let j = 0; j < row; j++) {
+          blocks[i][j].justHit = false;
+        }
+      }
+    }
   }
 
-  ball.update();
-  ball2.update();
+  /*  ball.update();
+  ball2.update(); */
   //paddle.bigger();
   //paddle.smaller();
 
