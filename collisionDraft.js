@@ -146,12 +146,12 @@ class PowerUp {
     this.x = x;
     this.y = y;
     this.r = 15;
-    this.number = 0;
+    this.type = 0;
     this.isActive = false;
   }
 
-  generate(){
-    this.number = Math.floor(Math.random() * 4);
+  generate() {
+    this.type = Math.floor(Math.random() * 4);
     this.isActive = false;
   }
 
@@ -162,13 +162,13 @@ class PowerUp {
   display() {
     push();
     translate(this.x, this.y);
-    if (this.number === 0) {
+    if (this.type === 0) {
       fill(255, 0, 255);
-    } else if (this.number === 1) {
+    } else if (this.type === 1) {
       fill(255, 200, 0);
-    } else if (this.number === 2) {
+    } else if (this.type === 2) {
       fill(100, 0, 250);
-    } else if (this.number === 3) {
+    } else if (this.type === 3) {
       fill(0, 250, 250);
     }
     ellipse(0, 0, this.r * 2);
@@ -217,7 +217,6 @@ function setup() {
 }
 
 let paddle = new Paddle(150);
-let ball2 = new Ball(paddle.x, 480, randomAngle());
 let player = new Player();
 let food = new Food();
 let blocks = [];
@@ -226,7 +225,7 @@ let gameState = "start";
 let row = 5;
 let column = 10;
 let powerUp = new PowerUp(50, 50);
-
+let powerUps = [];
 
 function generateBall(n) {
   for (let i = 0; i < n; i++) {
@@ -238,11 +237,11 @@ function gridBlocks() {
   let specialIndexes = [];
 
   // Generate unique random indices for special blocks
-  while (specialIndexes.length < 6) {
+  while (specialIndexes.length < 100) {
     let specialIndex = Math.floor(Math.random() * (row * column));
-      specialIndexes.push(specialIndex);
-    }
-  
+    specialIndexes.push(specialIndex);
+  }
+
   //let special = Math.floor(Math.random() * (row * column));
   let count = 0;
   for (let i = 0; i < column; i++) {
@@ -252,8 +251,8 @@ function gridBlocks() {
       count++;
       if (specialIndexes.includes(count)) {
         blocks[i][j].isSpecial = true;
-      }  
-    } 
+      }
+    }
   }
 }
 
@@ -288,15 +287,18 @@ function checkCollision(ball) {
           ball.directionX(); // Left or right collision
         }
 
-        // Deactivate block if no hits remain
+        // Deactivate block if no hits left
         if (block.hitPoint <= 0) {
           block.isActive = false;
           // if the block is the special one, drop the powerUp
           if (block.isSpecial) {
-            powerUp.generate();
-            powerUp.x = block.x + block.width / 2;
-            powerUp.y = block.y + block.height / 2;
-            powerUp.isActive = true;
+            let newPowerUp = new PowerUp(
+              block.x + block.width / 2,
+              block.y + block.height / 2
+            );
+            newPowerUp.generate();
+            newPowerUp.isActive = true;
+            powerUps.push(newPowerUp);
           }
         }
       }
@@ -305,17 +307,13 @@ function checkCollision(ball) {
       if (block.isActive) {
         block.display();
       }
-      //reset just hit flag
-      block.justHit = false;
     }
   }
 }
 
 function gamePage() {
-
   for (let ball of balls) {
     checkCollision(ball);
-    
   }
 
   paddle.display();
@@ -337,38 +335,40 @@ function gamePage() {
   paddle.display();
   paddle.update();
 
-// cathc the powerUp with the paddle
-  if (paddle.hit(powerUp) === true && powerUp.isActive === true) {
-    powerUp.isActive = false;
+  for (let powerUp of powerUps) {
+    // catch the powerUp with the paddle
+    if (paddle.hit(powerUp) === true && powerUp.isActive === true) {
+      powerUp.isActive = false;
 
-    if (powerUp.number === 0) {
-      paddle.bigger();
-    } else if (powerUp.number === 1) {
-      paddle.smaller();
-    } else if (powerUp.number >= 0 ) {
-      generateBall(3);
+      // different types, different functions
+      if (powerUp.type === 0) {
+        paddle.bigger();
+      } else if (powerUp.type === 1) {
+        paddle.smaller();
+      } else if (powerUp.type === 2) {
+        for (let i = 0; i < 3; i++) {
+          balls.push(new Ball(paddle.x, 480, randomAngle()));
+      }
+      } 
+
+      powerUps.splice(powerUps.indexOf(powerUp), 1);
+    } else if (powerUp.y > height) {
+      // Remove power-up off screen
+      powerUps.splice(powerUps.indexOf(powerUp), 1);
+    } else if (powerUp.isActive) {
+      powerUp.display();
+      powerUp.update();
     }
+  }
 
-    // re-set just hit flag
-    if (frameCount % 10 === 0) {
-      for (let i = 0; i < column; i++) {
-        for (let j = 0; j < row; j++) {
-          blocks[i][j].justHit = false;
-        }
+  // re-set just hit flag
+  if (frameCount % 10 === 0) {
+    for (let i = 0; i < column; i++) {
+      for (let j = 0; j < row; j++) {
+        blocks[i][j].justHit = false;
       }
     }
   }
-
-  /*  ball.update();
-  ball2.update(); */
-  //paddle.bigger();
-  //paddle.smaller();
-
-  if (powerUp.isActive) {
-    powerUp.display();
-    powerUp.update();
-  }
-
 
   if (paddle.hit(food) === true && food.isActive === true) {
     food.isActive = false;
@@ -377,7 +377,7 @@ function gamePage() {
   if (food.isActive) {
     food.display();
     food.update();
-  } 
+  }
 }
 
 function draw() {
@@ -385,8 +385,7 @@ function draw() {
 
   if (gameState === "start") {
     gridBlocks();
-    generateBall(1);
-
+    balls[0] = new Ball(paddle.x, 480, randomAngle());
     gameState = "game";
   } else if (gameState === "game") {
     gamePage();
