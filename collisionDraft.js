@@ -95,7 +95,11 @@ class Player {
   constructor() {
     this.name = "";
     this.score = 0;
-    //this.life = 3;
+    this.life = 3;
+  }
+
+  loseLife(){
+    this.life -= 1;
   }
 }
 
@@ -106,7 +110,7 @@ class Ball {
     this.angle = angle;
     this.r = 7;
     this.speed = 5;
-    this.dead = false;
+    
   }
 
   update() {
@@ -227,11 +231,7 @@ let column = 10;
 let powerUp = new PowerUp(50, 50);
 let powerUps = [];
 
-function generateBall(n) {
-  for (let i = 0; i < n; i++) {
-    balls[i] = new Ball(paddle.x, 480, randomAngle());
-  }
-}
+
 
 function gridBlocks() {
   let specialIndexes = [];
@@ -247,7 +247,7 @@ function gridBlocks() {
   for (let i = 0; i < column; i++) {
     blocks[i] = [];
     for (let j = 0; j < row; j++) {
-      blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, 4);
+      blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, 1);
       count++;
       if (specialIndexes.includes(count)) {
         blocks[i][j].isSpecial = true;
@@ -312,6 +312,7 @@ function checkCollision(ball) {
 }
 
 function gamePage() {
+  //check if the balls hit the blocks
   for (let ball of balls) {
     checkCollision(ball);
   }
@@ -319,15 +320,31 @@ function gamePage() {
   paddle.display();
   paddle.update();
 
+  //check if ball hit paddle
   for (let ball of balls) {
     ball.display();
-    if (ball.y > paddle.y) {
-      ball.x = paddle.x;
-      ball.y = 480;
-      ball.angle = randomAngle();
-    }
+      
     if (paddle.hit(ball) === true) {
-      ball.directionY();
+      ball.directionY(); 
+    } else if (ball.y + ball.r >= height){
+      
+      if(player.life > 0){  
+        if(balls.length > 1 ){ 
+          balls.splice(balls.indexOf(ball), 1);
+        } else {
+          player.loseLife();
+        console.log(player.life);
+        ball.x = paddle.x;
+        ball.y = 480;
+        ball.angle = randomAngle();
+        }
+        
+        }  
+       else {
+          gameState ="game out";
+        } 
+        
+          
     }
     ball.update();
   }
