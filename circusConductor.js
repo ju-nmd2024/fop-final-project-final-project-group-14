@@ -3,61 +3,80 @@ let conductorY = 100;
 let conductorS = 1;
 
 function circusConductor(){
+
+    push();
+
+    translate(200, 400);
+    scale(conductorS);
     
     //body
     fill(150, 0, 0);
-    ellipse(200, 400, 100);
+    ellipse(conductorX, 0, 100);
 
     //head
     fill(255, 255, 255);
-    arc(200, 390, 90, 80, PI, + TWO_PI);
+    arc(0, -10, 90, 80, PI, + TWO_PI);
 
     //eyes
     fill(0, 0, 0);
-    ellipse(185, 370, 10, 12);
-    ellipse(215, 370, 10, 12);
+    ellipse(-15, -30, 10, 12);
+    ellipse(15, -30, 10, 12);
 
     //jacket
     push();
     noStroke();
     fill(100, 0, 0);
-    triangle(165, 395, 170, 410, 150, 405);
-    triangle(167, 400, 158, 420, 180, 440);
-    triangle(235, 395, 230, 410, 250, 405);
-    triangle(233, 400, 242, 420, 220, 440);
+    triangle(-35, -5, -30, 10, -50, 5);
+    triangle(-33, 0, -42, 20, -20, 40);
+    triangle(35, -5, 30, 10, 50, 5);
+    triangle(33, 0, 42, 20, 20, 40);
     pop();
 
     //jacket buttons
     fill(237, 200, 33);
-    line(180, 400, 220, 400);
-    line(185, 415, 215, 415);
-    ellipse(180, 400, 8);
-    ellipse(220, 400, 8);
-    ellipse(185, 415, 8);
-    ellipse(215, 415, 8);
+    line(-20, 0, 20, 0);
+    line(-15, 15, 15, 15);
+    line(-10, 30, 10, 30);
+    ellipse(-20, 0, 8);
+    ellipse(20, 0, 8);
+    ellipse(-15, 15, 8);
+    ellipse(15, 15, 8);
+    ellipse(-10, 30, 8);
+    ellipse(10, 30, 8);
 
     //moustache left
     beginShape();
     fill(0, 0, 0);
-    vertex(198, 385);
-    bezierVertex(195, 385, 195, 395, 175, 385);
-    bezierVertex(175, 390, 195, 410, 198, 385);
+    vertex(-2, -15);
+    bezierVertex(-5, -15, -5, -5, -25, -15);
+    bezierVertex(-25, -10, -5, 10, -2, -15);
     endShape();
 
     //moustache right
     beginShape();
-    vertex(202, 385);
-    bezierVertex(205, 385, 205, 395, 225, 385);
-    bezierVertex(225, 390, 205, 410, 202, 385);
+    vertex(2, -15);
+    bezierVertex(5, -15, 5, -5, 25, -15);
+    bezierVertex(25, -10, 5, 10, 2, -15);
     endShape();
+
+    //nose
+    push();
+    noFill();
+    strokeWeight(3);
+    beginShape();
+    vertex(0, -35);
+    bezierVertex(0, -25, 10, -30, 0, -20);
+    endShape();
+    pop();
 
     //hat
     push();
-    translate(165, 355);
+    translate(-35, -45);
     rotate(-0.3);
     fill(0, 0, 0);
     rect(-20, 0, 80, 10);
     rect(0, -30, 40, 30);
+    pop();
     pop();
 
 }
