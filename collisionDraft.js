@@ -326,8 +326,8 @@ function gamePage() {
       
     if (paddle.hit(ball) === true) {
       ball.directionY(); 
-    } else if (ball.y + ball.r >= height){
-      
+    } else if (ball.y + ball.r >= 600){
+    
       if(player.life > 0){  
         if(balls.length > 1 ){ 
           balls.splice(balls.indexOf(ball), 1);
@@ -339,7 +339,7 @@ function gamePage() {
         ball.angle = randomAngle();
         }
         
-        }  
+        }   
        else {
           gameState ="game out";
         } 

@@ -2,7 +2,7 @@ let rectX = 100;
 let rectY = 250;
 let roofDetailWhiteX = 200;
 let roofDetailWhiteY = 250;
-let roofDetailRedX = 100;
+let roofDetailRedX = 200;
 let roofDetailRedY = 250;
 let roofPeak = 100;
 
@@ -36,7 +36,7 @@ function roofDetailWhite(roofDetailWhiteX, roofDetailWhiteY) {
 
 function roofDetailRed(roofDetailRedX, roofDetailRedY){
     fill(100, 10, 10);
-    arc(roofDetailRedX, roofDetailRedY, 100, 80, 0, + PI);
+    arc(100 + roofDetailRedX, roofDetailRedY, 100, 80, 0, + PI);
 }
 
 function draw () {
@@ -49,7 +49,7 @@ function draw () {
     }
 
     for (let i = 0; i < 6; i++) {
-        roofDetailRed(roofDetailRedX * i * 2, roofDetailRedY); 
+        roofDetailRed(roofDetailRedX * i, roofDetailRedY); 
     }
 
 
