@@ -12,21 +12,22 @@ let blocks = [];
 let balls = [];
 let gameState = "start";
 let row = 5;
-let column = 10; 
+let column = 10;
 let powerUps = [];
-  
+
 function setup() {
   createCanvas(600, 600);
+  frameRate(30);
 }
 window.setup = setup;
 
 //calculates a random angle for the start of the ball
 function randomAngle() {
   return (
-    Math.random() * 
-    (2 * PI - QUARTER_PI - (PI + QUARTER_PI)) + (PI + QUARTER_PI)
+    Math.random() * (2 * PI - QUARTER_PI - (PI + QUARTER_PI)) +
+    (PI + QUARTER_PI)
   );
-} 
+}
 
 function gridBlocks() {
   let specialIndexes = [];
@@ -37,16 +38,15 @@ function gridBlocks() {
     specialIndexes.push(specialIndex);
   }
 
-  
   let count = 0;
   for (let i = 0; i < column; i++) {
     blocks[i] = [];
     for (let j = 0; j < row; j++) {
-      blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, row - 1 - j); 
+      blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, row - 1 - j);
       count++;
       if (specialIndexes.includes(count)) {
         blocks[i][j].isSpecial = true;
-      } 
+      }
     }
   }
 }
@@ -59,9 +59,10 @@ function checkCollision(ball) {
       if (block.isActive && block.hit(ball) && block.justHit === false) {
         // flag so you cant hit it repeatedly in same frame
         block.justHit = true;
+        player.score += 5;
         //decrease hit point
-        block.hitPoint -= 1;
-
+        block.hitPoint -= 1; 
+ 
         // calculate overlaps
         let overlapLeft = ball.x + ball.r - block.x;
         let overlapRight = block.x + block.width - (ball.x - ball.r);
@@ -69,8 +70,8 @@ function checkCollision(ball) {
         let overlapBottom = block.y + block.height - (ball.y - ball.r);
 
         // find the smallest overlap to determine collision side
-        let minOverlap = Math.min(
-          overlapLeft,
+        let minOverlap = Math.min( 
+          overlapLeft, 
           overlapRight,
           overlapTop,
           overlapBottom
@@ -111,7 +112,7 @@ function gamePage() {
   for (let ball of balls) {
     checkCollision(ball);
   }
-
+  
   paddle.display();
   paddle.update();
 
@@ -121,20 +122,20 @@ function gamePage() {
 
     if (paddle.hit(ball)) {
       if (ball.hasBounced !== true) {
-        ball.directionY(); 
-        ball.hasBounced = true; 
+        ball.directionY();
+        ball.hasBounced = true;
       }
     } else {
-      
       ball.hasBounced = false;
     }
-    
+
+    //remove life only when player has 0 balls
     if (ball.y + ball.r >= 600) {
       if (player.life > 0) {
         if (balls.length > 1) {
           balls.splice(balls.indexOf(ball), 1);
         } else {
-          player.loseLife(); 
+          player.loseLife();
           console.log(player.life);
           ball.reset();
         }
@@ -183,12 +184,14 @@ function gamePage() {
     }
   }
 
+  // Audince throwing food
+  food.generate();
   if (paddle.hit(food) === true && food.isActive === true) {
     food.isActive = false;
-    //score decrease
+    player.score -= 2; 
   }
   if (food.isActive) {
-    food.display(); 
+    food.display();
     food.update();
   }
 }
@@ -200,8 +203,18 @@ function draw() {
     gridBlocks();
     balls[0] = new Ball(paddle.x, 480, randomAngle());
     gameState = "game";
+    gameTimer = 600;
   } else if (gameState === "game") {
-    gamePage();
+    if (gameTimer > 0) {
+      gamePage();
+      gameTimer--;
+      fill(255);
+      text("TIMER: " + Math.floor(gameTimer / 30), 50, 50);
+      text("SCORE: " + player.score, 50, 30);
+      text("LIVES: " + player.life, 50, 70);
+    } else {
+      gameState = "game over";
+    }
   }
 }
 window.draw = draw;
