@@ -14,7 +14,7 @@ let gameState = "start";
 let row = 5;
 let column = 10;
 let powerUps = [];
-
+  
 function setup() {
   createCanvas(600, 600);
 }
@@ -26,7 +26,7 @@ function randomAngle() {
     Math.random() * 
     (2 * PI - QUARTER_PI - (PI + QUARTER_PI) + (PI + QUARTER_PI))
   ); */
-}
+} 
 
 function gridBlocks() {
   let specialIndexes = [];
@@ -119,18 +119,24 @@ function gamePage() {
   for (let ball of balls) {
     ball.display();
 
-    if (paddle.hit(ball) === true) {
-      ball.directionY();
-    } else if (ball.y + ball.r >= 600) {
+    if (paddle.hit(ball)) {
+      if (ball.hasBounced !== true) {
+        ball.directionY(); 
+        ball.hasBounced = true; 
+      }
+    } else {
+      
+      ball.hasBounced = false;
+    }
+    
+    if (ball.y + ball.r >= 600) {
       if (player.life > 0) {
         if (balls.length > 1) {
           balls.splice(balls.indexOf(ball), 1);
         } else {
-          player.loseLife();
+          player.loseLife(); 
           console.log(player.life);
-          ball.x = paddle.x;
-          ball.y = 480;
-          ball.angle = randomAngle();
+          ball.reset();
         }
       } else {
         gameState = "game out";
@@ -182,7 +188,7 @@ function gamePage() {
     //score decrease
   }
   if (food.isActive) {
-    food.display();
+    food.display(); 
     food.update();
   }
 }

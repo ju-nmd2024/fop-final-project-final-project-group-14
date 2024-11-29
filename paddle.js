@@ -23,6 +23,7 @@ export default class Paddle {
     hit(object) {
       return (
         object.y + object.r >= this.y &&
+        object.y - object.r <= this.y + 2 &&
         object.x <= this.x + this.width / 2 &&
         object.x >= this.x - this.width / 2
       );

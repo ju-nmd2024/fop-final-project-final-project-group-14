@@ -5,7 +5,7 @@ export default class Ball {
       this.angle = angle;
       this.r = 7;
       this.speed = 5;
-      
+      this.hasBounced = false;
     }
   
     update() {
@@ -30,6 +30,11 @@ export default class Ball {
       pop();
     }
   
+    reset (){
+          this.x = paddle.x;
+          this.y = 480;
+          this.angle = randomAngle(); 
+    }
     //change orizontal direction
     directionX() {
       this.angle = PI - this.angle;
