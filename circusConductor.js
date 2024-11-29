@@ -1,17 +1,17 @@
 let conductorX = 100;
 let conductorY = 100;
-let conductorS = 1;
+let conductorS = 0.35;
 
 function circusConductor(){
 
     push();
 
-    translate(200, 400);
+    translate(conductorX, conductorY);
     scale(conductorS);
     
     //body
     fill(150, 0, 0);
-    ellipse(conductorX, 0, 100);
+    ellipse(0, 0, 100);
 
     //head
     fill(255, 255, 255);
