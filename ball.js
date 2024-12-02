@@ -4,7 +4,7 @@ export default class Ball {
       this.y = y;
       this.angle = angle;
       this.r = 7;
-      this.speed = 10;
+      this.speed = 9;
       this.hasBounced = false;
     }
   
