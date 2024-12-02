@@ -5,7 +5,7 @@ import PowerUp from "./powerup.js";
 import Food from "./food.js";
 import Player from "./player.js";
 
-let paddle = new Paddle(300);
+let paddle = new Paddle(600);
 let player = new Player();
 let food = new Food();
 let blocks = [];
@@ -16,11 +16,53 @@ let columnNumber = 10;
 let powerUps = [];
 
 
-function setup() {
-  createCanvas(600, 600);
+function setup(){
   frameRate(30);
+  createCanvas(1200, 800);
+  background(255, 255, 255);
 }
 window.setup = setup;
+
+let rectX = 100;
+let rectY = 250;
+let roofDetailWhiteX = 200;
+let roofDetailWhiteY = 250;
+let roofDetailRedX = 200;
+let roofDetailRedY = 250;
+let roofPeak = 100;
+
+function setup(){
+    createCanvas(1200, 800);
+    background(255, 255, 255);
+}  
+ 
+function tentBackground(rectX, rectY) {
+    noStroke();
+    fill(70, 10, 10); 
+    rect(rectX, rectY, 100, 700);
+    fill(150, 150, 150);
+    rect(rectX + 50, rectY, 50, 700);
+} 
+
+function roofTop(){
+    fill(240, 240, 240);
+    triangle(100, 250, 300, 250, 600, roofPeak);
+    triangle(500, 250, 700, 250, 600, roofPeak);
+    triangle(900, 250, 1100, 250, 600, roofPeak);
+    fill(120, 10, 10);
+    triangle(300, 250, 500, 250, 600, roofPeak);
+    triangle(700, 250, 900, 250, 600, roofPeak);
+}
+
+function roofDetailWhite(roofDetailWhiteX, roofDetailWhiteY) {
+    fill(220, 220, 220);
+    arc(roofDetailWhiteX, roofDetailWhiteY, 100, 80, 0, + PI);
+}
+
+function roofDetailRed(roofDetailRedX, roofDetailRedY){
+    fill(100, 10, 10);
+    arc(100 + roofDetailRedX, roofDetailRedY, 100, 80, 0, + PI);
+}
 
 //calculates a random angle for the start of the ball
 function randomAngle() {
@@ -54,13 +96,13 @@ function gridBlocks() {
   while (badIndexes.length < 5) {
     let badIndex = Math.floor(Math.random() * (rowNumber * columnNumber));
     badIndexes.push(badIndex);
-  }
+  } 
 
-  let count = 0; 
+  let count = 0;  
   for (let i = 0; i < columnNumber; i++) {
     blocks[i] = [];
     for (let j = 0; j < rowNumber; j++) {
-      blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, rowNumber - 1 - j);
+      blocks[i][j] = new Block(200 + 80 * i, 350 + 50 * j, rowNumber - 1 - j);
       count++;
       if (badIndexes.includes(count)){
         blocks[i][j].isBad = true;
@@ -70,12 +112,11 @@ function gridBlocks() {
       }  
     }
   }
-}
+} 
 
 function checkCollision(ball) {
   let adjustX = false;
   let adjustY = false;
-  let adjustAngle = false;
   let angle = 0;
   
   for (let i = 0; i < columnNumber; i++) {
@@ -193,7 +234,7 @@ function gamePage() {
     }
 
     //remove life only when player has 0 balls
-    if (ball.y + ball.r >= 600) {
+    if (ball.y + ball.r >= 800) {
       if (player.life > 0) {
         if (balls.length > 1) {
           balls.splice(balls.indexOf(ball), 1);
@@ -224,7 +265,7 @@ function gamePage() {
         paddle.smaller();
       } else if (powerUp.type === 2) {
         for (let i = balls.length; i < 3; i++) {
-          balls.push(new Ball(paddle.x, 480, randomAngle()));
+          balls.push(new Ball(paddle.x, paddle.y-10, randomAngle()));
         }
       } else if (powerUp.type === 3) {
         player.life++;
@@ -268,21 +309,40 @@ function gamePage() {
 }
 
 function draw() {
-  background(0, 0, 0);
+  noStroke();
+  background(220, 255, 255);
+
+push();
+  for (let i = 1; i < 11; i++) {
+    tentBackground(rectX * i, rectY);
+  }
+  for (let i = 0; i < 6; i++) {
+    roofDetailWhite(roofDetailWhiteX * i, roofDetailWhiteY);
+  }
+for (let i = 0; i < 6; i++) {
+    roofDetailRed(roofDetailRedX * i, roofDetailRedY); 
+}
+
+
+roofTop();
+pop();
+
 
   if (gameState === "start") {
     gridBlocks();
-    balls[0] = new Ball(paddle.x, 480, randomAngle());
+    balls[0] = new Ball(paddle.x, paddle.y - 10, randomAngle());
     gameState = "game";
     gameTimer = 10000;
   } else if (gameState === "game") {
     if (gameTimer > 0) {
       gamePage();
       gameTimer--;
-      fill(255);
+      push();
+      fill(0);
       text("TIMER: " + Math.floor(gameTimer / 30), 50, 50);
       text("SCORE: " + player.score, 50, 30);
       text("LIVES: " + player.life, 50, 70);
+      pop();
     } else {
       gameState = "game over";
       console.log("time");

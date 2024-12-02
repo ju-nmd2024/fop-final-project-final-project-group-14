@@ -3,7 +3,7 @@ export default class Block {
     this.x = x;
     this.y = y;
     this.hitPoint = hitPoint;
-    this.width = 50;
+    this.width = 80;
     this.height = 50;
     this.isActive = true;
     this.justHit = false;

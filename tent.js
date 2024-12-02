@@ -43,11 +43,9 @@ function draw () {
     for (let i = 1; i < 11; i++) {
         tentBackground(rectX * i, rectY);
     }
-
     for (let i = 0; i < 6; i++) {
         roofDetailWhite(roofDetailWhiteX * i, roofDetailWhiteY);
     }
-
     for (let i = 0; i < 6; i++) {
         roofDetailRed(roofDetailRedX * i, roofDetailRedY); 
     }
