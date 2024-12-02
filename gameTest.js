@@ -11,9 +11,10 @@ let food = new Food();
 let blocks = [];
 let balls = [];
 let gameState = "start";
-let row = 5;
-let column = 10;
+let rowNumber = 5;
+let columnNumber = 10;
 let powerUps = [];
+
 
 function setup() {
   createCanvas(600, 600);
@@ -29,39 +30,71 @@ function randomAngle() {
   );
 }
 
+function allBlocksHit(){
+  let count = 0;
+  for (let i = 0; i < columnNumber; i++) { 
+    for (let j = 0; j < rowNumber; j++) {
+      if(blocks[i][j].isActive === false || blocks[i][j].isBad ){
+        count++;
+      }
+    } 
+  }
+  return(columnNumber * rowNumber === count);   
+}
+
 function gridBlocks() {
   let specialIndexes = [];
-
-  // Generate unique random indices for special blocks
+  let badIndexes = [];
+  // Generate random indices for special and bad blocks
   while (specialIndexes.length < 8) {
-    let specialIndex = Math.floor(Math.random() * (row * column));
+    let specialIndex = Math.floor(Math.random() * (rowNumber * columnNumber));
     specialIndexes.push(specialIndex);
   }
+  
+  while (badIndexes.length < 5) {
+    let badIndex = Math.floor(Math.random() * (rowNumber * columnNumber));
+    badIndexes.push(badIndex);
+  }
 
-  let count = 0;
-  for (let i = 0; i < column; i++) {
+  let count = 0; 
+  for (let i = 0; i < columnNumber; i++) {
     blocks[i] = [];
-    for (let j = 0; j < row; j++) {
-      blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, row - 1 - j);
+    for (let j = 0; j < rowNumber; j++) {
+      blocks[i][j] = new Block(50 + 50 * i, 100 + 50 * j, rowNumber - 1 - j);
       count++;
+      if (badIndexes.includes(count)){
+        blocks[i][j].isBad = true;
+      }
       if (specialIndexes.includes(count)) {
         blocks[i][j].isSpecial = true;
-      }
+      }  
     }
   }
 }
 
 function checkCollision(ball) {
-  for (let i = 0; i < column; i++) {
-    for (let j = 0; j < row; j++) {
+  let adjustX = false;
+  let adjustY = false;
+  let adjustAngle = false;
+  let angle = 0;
+  
+  for (let i = 0; i < columnNumber; i++) {
+    for (let j = 0; j < rowNumber; j++) {
       let block = blocks[i][j];
+     
+      
       //if the block is hit
-      if (block.isActive && block.hit(ball) && block.justHit === false) {
+      if (block.isActive && block.hit(ball) && block.justHit===false) {
         // flag so you cant hit it repeatedly in same frame
         block.justHit = true;
-        player.score += 5;
-        //decrease hit point
-        block.hitPoint -= 1; 
+        
+        if(block.isBad === false){ 
+          
+          player.score += 5;
+          //decrease hit point
+          block.hitPoint -= 1;  
+        }
+        
  
         // calculate overlaps
         let overlapLeft = ball.x + ball.r - block.x;
@@ -76,15 +109,30 @@ function checkCollision(ball) {
           overlapTop,
           overlapBottom
         );
-
-        if (minOverlap === overlapTop || minOverlap === overlapBottom) {
-          ball.directionY(); // Top or bottom collision
-        } else if (minOverlap === overlapLeft || minOverlap === overlapRight) {
-          ball.directionX(); // Left or right collision
-        }
-
+ 
+        //Reposition ball and change of direction
+        if (minOverlap === overlapTop) {
+          adjustY = true; 
+          ball.y = block.y - ball.r - 1;
+          ball.y -=2;
+          angle = - randomAngle();
+        } else if (minOverlap === overlapBottom) {
+          adjustY = true; 
+          ball.y = block.y + block.height + ball.r + 1;
+          ball.y += 2;
+          angle = randomAngle();
+        } else if (minOverlap === overlapLeft) {
+          adjustX = true; 
+          ball.x = block.x - ball.r - 1;
+          angle = randomAngle();
+        } else if (minOverlap === overlapRight) {
+          adjustX = true;
+          ball.x = block.x + block.width + ball.r + 1;
+          angle = randomAngle();
+        }   
+ 
         // Deactivate block if no hits left
-        if (block.hitPoint <= 0) {
+        if (block.hitPoint <= 0 && block.isBad ===false) {
           block.isActive = false;
           // if the block is the special one, drop the powerUp
           if (block.isSpecial) {
@@ -97,16 +145,31 @@ function checkCollision(ball) {
             powerUps.push(newPowerUp);
           }
         }
+        if(block.isBad){
+          ball.angle = angle;
+        }
       }
 
       // Display the block if it's active
       if (block.isActive) {
         block.display();
       }
-    }
+    } 
   }
-}
+  
+    // Adjust the ball's direction after all collisions
+  // the adjustY and adjustX logic comes from chatGPT https://chatgpt.com/share/674b4c5e-ffec-8006-bfa8-695afdac74ad
+  
+  if (adjustY) {
+    ball.directionY();  
+  }
+  if (adjustX) {
+    ball.directionX();
+  }
 
+  
+}   
+  
 function gamePage() {
   //check if the balls hit the blocks
   for (let ball of balls) {
@@ -136,11 +199,11 @@ function gamePage() {
           balls.splice(balls.indexOf(ball), 1);
         } else {
           player.loseLife();
-          console.log(player.life);
           ball.reset();
         }
       } else {
-        gameState = "game out";
+        gameState = "game over";
+        console.log("lives");
       }
     }
     ball.update();
@@ -160,9 +223,11 @@ function gamePage() {
       } else if (powerUp.type === 1) {
         paddle.smaller();
       } else if (powerUp.type === 2) {
-        for (let i = 0; i < 3; i++) {
+        for (let i = balls.length; i < 3; i++) {
           balls.push(new Ball(paddle.x, 480, randomAngle()));
         }
+      } else if (powerUp.type === 3) {
+        player.life++;
       }
 
       powerUps.splice(powerUps.indexOf(powerUp), 1);
@@ -175,14 +240,14 @@ function gamePage() {
     }
   }
 
-  // re-set just hit flag
-  if (frameCount % 10 === 0) {
-    for (let i = 0; i < column; i++) {
-      for (let j = 0; j < row; j++) {
+  // re-set just hit flag 
+
+    for (let i = 0; i < columnNumber; i++) {
+      for (let j = 0; j < rowNumber; j++) {
         blocks[i][j].justHit = false;
       }
     }
-  }
+  
 
   // Audince throwing food
   food.generate();
@@ -194,6 +259,12 @@ function gamePage() {
     food.display();
     food.update();
   }
+  
+  
+  if (allBlocksHit()){
+    gameState = "game over";
+    console.log("blocks");
+  }
 }
 
 function draw() {
@@ -203,7 +274,7 @@ function draw() {
     gridBlocks();
     balls[0] = new Ball(paddle.x, 480, randomAngle());
     gameState = "game";
-    gameTimer = 600;
+    gameTimer = 10000;
   } else if (gameState === "game") {
     if (gameTimer > 0) {
       gamePage();
@@ -214,6 +285,7 @@ function draw() {
       text("LIVES: " + player.life, 50, 70);
     } else {
       gameState = "game over";
+      console.log("time");
     }
   }
 }
