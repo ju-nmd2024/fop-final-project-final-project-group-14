@@ -30,11 +30,7 @@ let roofDetailWhiteY = 250;
 let roofDetailRedX = 200;
 let roofDetailRedY = 250;
 let roofPeak = 100;
-
-function setup(){
-    createCanvas(1200, 800);
-    background(255, 255, 255);
-}  
+ 
  
 function tentBackground(rectX, rectY) {
     noStroke();
