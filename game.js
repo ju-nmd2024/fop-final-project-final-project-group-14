@@ -97,7 +97,7 @@ function gridBlocks() {
     let badIndex = Math.floor(Math.random() * (rowNumber * columnNumber));
     badIndexes.push(badIndex);
   } 
-
+ 
   let count = 0;  
   for (let i = 0; i < columnNumber; i++) {
     blocks[i] = [];
@@ -316,7 +316,7 @@ push();
   for (let i = 1; i < 11; i++) {
     tentBackground(rectX * i, rectY);
   }
-  for (let i = 0; i < 6; i++) {
+  for (let i = 1; i < 6; i++) {
     roofDetailWhite(roofDetailWhiteX * i, roofDetailWhiteY);
   }
 for (let i = 0; i < 6; i++) {
@@ -339,9 +339,17 @@ pop();
       gameTimer--;
       push();
       fill(0);
+      textFont('Courier New');
       text("TIMER: " + Math.floor(gameTimer / 30), 50, 50);
       text("SCORE: " + player.score, 50, 30);
-      text("LIVES: " + player.life, 50, 70);
+      
+      let lives=[];
+      for(let i = 0; i < player.life; i++) {
+        lives[i]="❤️";
+      }
+      text("LIVES: " + lives, 50, 70);
+
+      
       pop();
     } else {
       gameState = "game over";
