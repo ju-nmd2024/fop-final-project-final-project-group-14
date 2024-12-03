@@ -291,7 +291,9 @@ function gamePage() {
   
 
   // Audince throwing food
+  if(frameCount % 180 === 0) {
   food.generate();
+  }
   if (paddle.hit(food) === true && food.isActive === true) {
     food.isActive = false;
     player.score -= 2; 

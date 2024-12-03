@@ -40,6 +40,8 @@ export default class Paddle {
     );
   }
 
+  
+
   bigger() {
     this.isDifferent = true;
     this.width = 150;
