@@ -7,14 +7,14 @@ import Player from "./player.js";
 
 let paddle = new Paddle(600);
 let player = new Player();
-let food = new Food();
+//let food = new Food();
 let blocks = [];
 let balls = [];
 let gameState = "start";
 let rowNumber = 5;
 let columnNumber = 10;
 let powerUps = [];
-
+let foods = [];
 
 function setup(){
   frameRate(30);
@@ -202,7 +202,7 @@ function checkCollision(ball) {
   }
   if (adjustX) {
     ball.directionX();
-  }
+  } 
 
   
 }   
@@ -212,7 +212,7 @@ function gamePage() {
   for (let ball of balls) {
     checkCollision(ball);
   }
-  
+
   paddle.display();
   paddle.update();
 
@@ -284,22 +284,31 @@ function gamePage() {
         blocks[i][j].justHit = false;
       }
     }
-  
+
 
   // Audince throwing food
-  if(frameCount % 180 === 0) {
-  food.generate();
-  }
-  if (paddle.hit(food) === true && food.isActive === true) {
+  if(frameCount % 90 === 0) {
+    let newFood = new Food();
+    newFood.generate();
+    foods.push(newFood);
+  }  
+
+  /* for(let food of foods){
+    food.generate;
+  }  */ 
+ 
+  for (let food of foods) {
+  if (food.onPaddle(paddle) === true && food.isActive === true) {
     food.isActive = false;
     player.score -= 2; 
   }
   if (food.isActive) {
     food.display();
     food.update();
-  }
-  
-  
+  } 
+}
+       
+    
   if (allBlocksHit()){
     gameState = "game over";
     console.log("blocks");
@@ -341,6 +350,7 @@ pop();
       text("TIMER: " + Math.floor(gameTimer / 30), 50, 50);
       text("SCORE: " + player.score, 50, 30);
       
+      //heart emoji is copied and pasted from the internet https://emojipedia.org/red-heart
       let lives=[];
       for(let i = 0; i < player.life; i++) {
         lives[i]="❤️";

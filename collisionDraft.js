@@ -1,4 +1,4 @@
-import Block from "./block.js";
+/* import Block from "./block.js";
 import Ball from "./ball.js";
 import Paddle from "./paddle.js";
 import PowerUp from "./powerup.js";
@@ -25,7 +25,7 @@ function randomAngle() {
   return 4.5; /* (
     Math.random() * 
     (2 * PI - QUARTER_PI - (PI + QUARTER_PI) + (PI + QUARTER_PI))
-  ); */
+  ); 
 } 
 
 function gridBlocks() {
@@ -205,3 +205,4 @@ function draw() {
   }
 }
 window.draw = draw;
+ */

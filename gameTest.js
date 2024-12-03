@@ -1,4 +1,4 @@
-import Block from "./block.js";
+/* import Block from "./block.js";
 import Ball from "./ball.js";
 import Paddle from "./paddle.js";
 import PowerUp from "./powerup.js";
@@ -350,3 +350,4 @@ pop();
   }
 }
 window.draw = draw;
+ */

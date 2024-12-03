@@ -9,13 +9,13 @@ export default class Paddle {
   }
 
   update() {
-    
+    //if(this.x - this.width / 2 >= 110 && this.x + this.width/2 <= 1000){
     if(this.isDifferent){
       this.timer--;
       if(this.timer === 0){
       this.width = 100;
     }
-    } 
+    }  
     
     
     if (keyIsDown(39)) {
@@ -27,7 +27,14 @@ export default class Paddle {
         this.x = this.x - 5;
       }
     }
-  }
+
+    if(this.x - this.width / 2 <= 100 ) {
+      this.x = 100 + this.width/2;
+    }
+    if(this.x + this.width / 2 >= 1100 ) {
+      this.x = 1100 - this.width/2;
+    }
+}
 
   //paddle collision
 
