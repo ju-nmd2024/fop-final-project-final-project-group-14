@@ -30,7 +30,85 @@ let roofDetailWhiteY = 250;
 let roofDetailRedX = 200;
 let roofDetailRedY = 250;
 let roofPeak = 100;
- 
+
+let player1 = new Player("--");
+player1.score = 0;
+let player2 = new Player("--");
+player2.score = 0;
+let player3 = new Player("--");
+player3.score = 0;
+let player4 = new Player("--");
+player4.score = 0;
+let player5 = new Player("--");
+player5.score = 0;
+let player6 = new Player("--");
+player6.score = 0;
+let player7 = new Player("--");
+player7.score = 0;
+let player8 = new Player("--");
+player8.score = 0;
+let player9 = new Player("--");
+player9.score = 0;
+let player10 = new Player("--");
+player10.score = 0;
+
+let winners = [player10,player9,player8,player7,player6,player5,player4,player3,player2,player1];
+
+
+let nameField;
+let settingUp = true;
+
+
+function leaderBoard() {
+  if(settingUp === true){
+    nameField = createInput('');
+    nameField.attribute('placeholder', 'your name');
+    nameField.position(200, 150);
+    nameField.size(200, 30);
+    settingUp = false;
+  }
+
+  push();
+  background (250, 100, 100);
+  fill(255);
+  textSize(40);
+  textAlign(CENTER);
+  textStyle(BOLD);
+  text("LEADER BOARD:", 300, 100);
+  pop();
+
+
+
+    for (let winner of winners){
+    textSize(24);
+    text("Player: "+ winner.name, 100, 250 + 50 * winners.indexOf(winner));
+    text("Score: "+ winner.score, 350, 250 + 50 * winners.indexOf(winner));
+
+    }
+
+  
+
+}
+
+function keyPressed() {
+  if (keyCode === ENTER) {
+      player.name = nameField.value();
+
+      let index;
+
+      for(let winner of winners){
+        if(winner.score > player.score){
+          index = winners.indexOf(winner) + 1;
+          }
+      }
+      winners.splice(index, 0, player);
+      winners.pop();
+
+      nameField.remove();
+
+  }
+}
+window.keyPressed = keyPressed;
  
 function tentBackground(rectX, rectY) {
     noStroke();
@@ -363,6 +441,8 @@ pop();
       gameState = "game over";
       console.log("time");
     }
+  } else if(gameState === "game over"){
+    leaderBoard();
   }
 }
 window.draw = draw;
