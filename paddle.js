@@ -69,4 +69,9 @@ export default class Paddle {
     line(0, 0, this.width, 0);
     pop();
   }
+
+  reset(){
+    this.x = 600;
+    this.width = 100;
+  }
 }

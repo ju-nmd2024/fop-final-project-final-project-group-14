@@ -11,7 +11,7 @@ let player = new Player();
 //let food = new Food();
 let blocks = [];
 let balls = [];
-let gameState = "start";
+let gameState = "game over";
 let rowNumber = 5;
 let columnNumber = 10;
 let powerUps = [];
@@ -37,6 +37,7 @@ let roofDetailRedX = 200;
 let roofDetailRedY = 250;
 let roofPeak = 100;
 
+let currentPlayer;
 let player1 = new Player("--");
 player1.score = 0;
 let player2 = new Player("--");
@@ -71,9 +72,9 @@ let winners = [
   player1,
 ];
 
-// text-box input logic from "User Input: Text Fields by Samizdat" https://editor.p5js.org/Samizdat/sketches/eUsieMk6j
 let nameField;
 let settingUp = true;
+let nameOk = false;
 
 function mouseClicked() {
   if (gameState === "start") {
@@ -94,25 +95,7 @@ function mouseClicked() {
     }
   }
 }
-
-function keyPressed() {
-  if (keyCode === ENTER) {
-    player.name = nameField.value();
-
-    let index;
-
-    for (let winner of winners) {
-      if (winner.score > player.score) {
-        index = winners.indexOf(winner) + 1;
-      }
-    }
-    winners.splice(index, 0, player);
-    winners.pop();
-
-    nameField.remove();
-  }
-}
-window.keyPressed = keyPressed;
+window.mouseClicked = mouseClicked;
 
 function tentBackground(rectX, rectY) {
   noStroke();
@@ -290,7 +273,69 @@ function startPage() {
 }
 
 function rulesPage() {
+  push();
+  fill(0, 0, 0);
+  rect(495, 140, 200, 50, 10);
+  rect(130, 300, 950, 380, 20);
+  fill(255);
+  textSize(40);
+  textAlign(CENTER);
+  textStyle(BOLD);
+  text("RULES:", 600, 180);
+
+  textFont("Courier New");
+  textStyle(BOLD);
+  textAlign(LEFT);
+  textSize(20);
+  text(
+    "Use the arrow keys to move the paddle. Keep the conductor moving and break the blocks. Watch out for grey blocks! They will make the conductor bounce in unexpected directions when hit. Be ready to react quickly!\n\nThroughout the game, items will fall from random blocks.\nCatch them with your paddle, but be carefull...not everything is helpful!",
+    150,
+    320,
+    920
+  );
+  text(
+    "The audience might throw food onto the field.\n If it lands on your paddle, your score will decrease!!!!",
+    150,
+    620,
+    800
+  );
+
+  text(": MULTIPLE CONDUCTORS (max 3)", 200, 485, 800);
+  text(": BIGGER PADDLE", 200, 515, 800);
+  text(": SMALLER PADDLE", 200, 545, 800);
+  text(": LIVES +1", 200, 575, 800);
+
+  // display different powerups colours
+  fill(100, 0, 250);
+  ellipse(180, 495, 25);
+  fill(255, 0, 255);
+  ellipse(180, 525, 25);
+  fill(255, 200, 0);
+  ellipse(180, 555, 25);
+  fill(10, 230, 0);
+  ellipse(180, 585, 25);
+
+  pop();
   backButton.display();
+}
+
+function reset() {
+  player.life = 3;
+  player.score = 0;
+  player.name = "Your Name";
+
+  nameOk = false;
+
+  paddle.reset();
+
+  foods = [];
+  powerUps = [];
+  balls[0] = new Ball(paddle.x, paddle.y - 10, randomAngle());
+
+  gridBlocks();
+
+  gameTimer = 10000;
+  gameState = "game";
 }
 
 function gamePage() {
@@ -394,13 +439,21 @@ function gamePage() {
   }
 
   if (allBlocksHit()) {
-    gameState = "game over";
+    gameState = "start";
     settingUp = true;
   }
 }
 
 function leaderBoard() {
+  push();
+  fill(0);
+  textFont("Courier New");
+  textStyle(BOLD);
+  textSize(30);
+  text("YOUR SCORE: " + player.score, 900, 100);
+  pop();
   if (settingUp === true) {
+    // text-box input logic from "User Input: Text Fields by Samizdat" https://editor.p5js.org/Samizdat/sketches/eUsieMk6j
     nameField = createInput("");
     nameField.attribute("placeholder", "your name");
     nameField.position(510, 220);
@@ -417,8 +470,6 @@ function leaderBoard() {
   textAlign(CENTER);
   textStyle(BOLD);
   text("LEADER BOARD:", 600, 180);
-  againButton.display();
-  backHomeButton.display();
   pop();
 
   for (let winner of winners) {
@@ -432,7 +483,37 @@ function leaderBoard() {
     text("Score: " + winner.score, 850, 320 + 40 * winners.indexOf(winner));
     pop();
   }
+
+  //only if the player wrote its name, the buttons appear
+  if (nameOk === true) {
+    againButton.display();
+    backHomeButton.display();
+  }
 }
+
+function keyPressed() {
+  if (gameState === "game over") {
+    if (keyCode === ENTER && nameOk === false) {
+      //save the last player info
+      currentPlayer = new Player(nameField.value());
+      currentPlayer.score = player.score;
+
+      let index;
+      for (let winner of winners) {
+        if (winner.score > currentPlayer.score) {
+          index = winners.indexOf(winner) + 1;
+        }
+      }
+      winners.splice(index, 0, currentPlayer);
+      winners.pop();
+
+      nameField.remove();
+      settingUp = false;
+      nameOk = true;
+    }
+  }
+}
+window.keyPressed = keyPressed;
 
 function draw() {
   noStroke();
@@ -457,10 +538,7 @@ function draw() {
   } else if (gameState === "rules") {
     rulesPage();
   } else if (gameState === "load") {
-    gridBlocks();
-    balls[0] = new Ball(paddle.x, paddle.y - 10, randomAngle());
-    gameState = "game";
-    gameTimer = 10000;
+    reset();
   } else if (gameState === "game") {
     if (gameTimer > 0) {
       gamePage();

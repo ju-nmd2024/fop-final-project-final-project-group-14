@@ -26,7 +26,7 @@ export default class PowerUp {
       } else if (this.type === 2) {
         fill(100, 0, 250);
       } else if (this.type === 3) {
-        fill(0, 250, 250);
+        fill(10, 230, 0);
       }
       ellipse(0, 0, this.r * 2);
       pop();
