@@ -4,6 +4,7 @@ import Paddle from "./paddle.js";
 import PowerUp from "./powerup.js";
 import Food from "./food.js";
 import Player from "./player.js";
+import Button from "./button.js";
 
 let paddle = new Paddle(600);
 let player = new Player();
@@ -15,8 +16,13 @@ let rowNumber = 5;
 let columnNumber = 10;
 let powerUps = [];
 let foods = [];
+const againButton = new Button(650, 700, 150, 60, "PLAY AGAIN");
+const backHomeButton = new Button(400, 700, 150, 60, "BACK HOME");
+const rulesButton = new Button(400, 600, 150, 60, "RULES");
+const playButton = new Button(650, 600, 150, 60, "PLAY");
+const backButton = new Button(550, 700, 150, 60, "BACK");
 
-function setup(){
+function setup() {
   frameRate(30);
   createCanvas(1200, 800);
   background(255, 255, 255);
@@ -52,90 +58,88 @@ player9.score = 0;
 let player10 = new Player("--");
 player10.score = 0;
 
-let winners = [player10,player9,player8,player7,player6,player5,player4,player3,player2,player1];
+let winners = [
+  player10,
+  player9,
+  player8,
+  player7,
+  player6,
+  player5,
+  player4,
+  player3,
+  player2,
+  player1,
+];
 
-
+// text-box input logic from "User Input: Text Fields by Samizdat" https://editor.p5js.org/Samizdat/sketches/eUsieMk6j
 let nameField;
 let settingUp = true;
 
-
-function leaderBoard() {
-  if(settingUp === true){
-    nameField = createInput('');
-    nameField.attribute('placeholder', 'your name');
-    nameField.position(200, 150);
-    nameField.size(200, 30);
-    settingUp = false;
-  }
-
-  push();
-  background (250, 100, 100);
-  fill(255);
-  textSize(40);
-  textAlign(CENTER);
-  textStyle(BOLD);
-  text("LEADER BOARD:", 300, 100);
-  pop();
-
-
-
-    for (let winner of winners){
-    textSize(24);
-    text("Player: "+ winner.name, 100, 250 + 50 * winners.indexOf(winner));
-    text("Score: "+ winner.score, 350, 250 + 50 * winners.indexOf(winner));
-
+function mouseClicked() {
+  if (gameState === "start") {
+    if (playButton.hitTest(mouseX, mouseY)) {
+      gameState = "load";
+    } else if (rulesButton.hitTest(mouseX, mouseY)) {
+      gameState = "rules";
     }
-
-  
-
+  } else if (gameState === "rules") {
+    if (backButton.hitTest(mouseX, mouseY)) {
+      gameState = "start";
+    }
+  } else if (gameState === "game over") {
+    if (againButton.hitTest(mouseX, mouseY)) {
+      gameState = "load";
+    } else if (backHomeButton.hitTest(mouseX, mouseY)) {
+      gameState = "start";
+    }
+  }
 }
 
 function keyPressed() {
   if (keyCode === ENTER) {
-      player.name = nameField.value();
+    player.name = nameField.value();
 
-      let index;
+    let index;
 
-      for(let winner of winners){
-        if(winner.score > player.score){
-          index = winners.indexOf(winner) + 1;
-          }
+    for (let winner of winners) {
+      if (winner.score > player.score) {
+        index = winners.indexOf(winner) + 1;
       }
-      winners.splice(index, 0, player);
-      winners.pop();
+    }
+    winners.splice(index, 0, player);
+    winners.pop();
 
-      nameField.remove();
-
+    nameField.remove();
   }
 }
 window.keyPressed = keyPressed;
- 
-function tentBackground(rectX, rectY) {
-    noStroke();
-    fill(70, 10, 10); 
-    rect(rectX, rectY, 100, 700);
-    fill(150, 150, 150);
-    rect(rectX + 50, rectY, 50, 700);
-} 
 
-function roofTop(){
-    fill(240, 240, 240);
-    triangle(100, 250, 300, 250, 600, roofPeak);
-    triangle(500, 250, 700, 250, 600, roofPeak);
-    triangle(900, 250, 1100, 250, 600, roofPeak);
-    fill(120, 10, 10);
-    triangle(300, 250, 500, 250, 600, roofPeak);
-    triangle(700, 250, 900, 250, 600, roofPeak);
+function tentBackground(rectX, rectY) {
+  noStroke();
+  fill(70, 10, 10);
+  rect(rectX, rectY, 100, 700);
+  fill(150, 150, 150);
+  rect(rectX + 50, rectY, 50, 700);
+}
+
+function roofTop() {
+  fill(240, 240, 240);
+  triangle(100, 250, 300, 250, 600, roofPeak);
+  triangle(500, 250, 700, 250, 600, roofPeak);
+  triangle(900, 250, 1100, 250, 600, roofPeak);
+  fill(120, 10, 10);
+  triangle(300, 250, 500, 250, 600, roofPeak);
+  triangle(700, 250, 900, 250, 600, roofPeak);
 }
 
 function roofDetailWhite(roofDetailWhiteX, roofDetailWhiteY) {
-    fill(220, 220, 220);
-    arc(roofDetailWhiteX, roofDetailWhiteY, 100, 80, 0, + PI);
+  fill(220, 220, 220);
+  arc(roofDetailWhiteX, roofDetailWhiteY, 100, 80, 0, +PI);
 }
 
-function roofDetailRed(roofDetailRedX, roofDetailRedY){
-    fill(100, 10, 10);
-    arc(100 + roofDetailRedX, roofDetailRedY, 100, 80, 0, + PI);
+function roofDetailRed(roofDetailRedX, roofDetailRedY) {
+  fill(100, 10, 10);
+  arc(100 + roofDetailRedX, roofDetailRedY, 100, 80, 0, +PI);
 }
 
 //calculates a random angle for the start of the ball
@@ -146,16 +150,16 @@ function randomAngle() {
   );
 }
 
-function allBlocksHit(){
+function allBlocksHit() {
   let count = 0;
-  for (let i = 0; i < columnNumber; i++) { 
+  for (let i = 0; i < columnNumber; i++) {
     for (let j = 0; j < rowNumber; j++) {
-      if(blocks[i][j].isActive === false || blocks[i][j].isBad ){
+      if (blocks[i][j].isActive === false || blocks[i][j].isBad) {
         count++;
       }
-    } 
+    }
   }
-  return(columnNumber * rowNumber === count);   
+  return columnNumber * rowNumber === count;
 }
 
 function gridBlocks() {
@@ -166,51 +170,48 @@ function gridBlocks() {
     let specialIndex = Math.floor(Math.random() * (rowNumber * columnNumber));
     specialIndexes.push(specialIndex);
   }
-  
+
   while (badIndexes.length < 5) {
     let badIndex = Math.floor(Math.random() * (rowNumber * columnNumber));
     badIndexes.push(badIndex);
-  } 
- 
-  let count = 0;  
+  }
+
+  let count = 0;
   for (let i = 0; i < columnNumber; i++) {
     blocks[i] = [];
     for (let j = 0; j < rowNumber; j++) {
       blocks[i][j] = new Block(200 + 80 * i, 350 + 50 * j, rowNumber - 1 - j);
       count++;
-      if (badIndexes.includes(count)){
+      if (badIndexes.includes(count)) {
         blocks[i][j].isBad = true;
       }
       if (specialIndexes.includes(count)) {
         blocks[i][j].isSpecial = true;
-      }  
+      }
     }
   }
-} 
+}
 
 function checkCollision(ball) {
   let adjustX = false;
   let adjustY = false;
   let angle = 0;
-  
+
   for (let i = 0; i < columnNumber; i++) {
     for (let j = 0; j < rowNumber; j++) {
       let block = blocks[i][j];
-     
-      
+
       //if the block is hit
-      if (block.isActive && block.hit(ball) && block.justHit===false) {
+      if (block.isActive && block.hit(ball) && block.justHit === false) {
         // flag so you cant hit it repeatedly in same frame
         block.justHit = true;
-        
-        if(block.isBad === false){ 
-          
+
+        if (block.isBad === false) {
           player.score += 5;
           //decrease hit point
-          block.hitPoint -= 1;  
+          block.hitPoint -= 1;
         }
-        
- 
+
         // calculate overlaps
         let overlapLeft = ball.x + ball.r - block.x;
         let overlapRight = block.x + block.width - (ball.x - ball.r);
@@ -218,36 +219,36 @@ function checkCollision(ball) {
         let overlapBottom = block.y + block.height - (ball.y - ball.r);
 
         // find the smallest overlap to determine collision side
-        let minOverlap = Math.min( 
-          overlapLeft, 
+        let minOverlap = Math.min(
+          overlapLeft,
           overlapRight,
           overlapTop,
           overlapBottom
         );
- 
+
         //Reposition ball and change of direction
         if (minOverlap === overlapTop) {
-          adjustY = true; 
+          adjustY = true;
           ball.y = block.y - ball.r - 1;
-          ball.y -=2;
-          angle = - randomAngle();
+          ball.y -= 2;
+          angle = -randomAngle();
         } else if (minOverlap === overlapBottom) {
-          adjustY = true; 
+          adjustY = true;
           ball.y = block.y + block.height + ball.r + 1;
           ball.y += 2;
           angle = randomAngle();
         } else if (minOverlap === overlapLeft) {
-          adjustX = true; 
+          adjustX = true;
           ball.x = block.x - ball.r - 1;
           angle = randomAngle();
         } else if (minOverlap === overlapRight) {
           adjustX = true;
           ball.x = block.x + block.width + ball.r + 1;
           angle = randomAngle();
-        }   
- 
+        }
+
         // Deactivate block if no hits left
-        if (block.hitPoint <= 0 && block.isBad ===false) {
+        if (block.hitPoint <= 0 && block.isBad === false) {
           block.isActive = false;
           // if the block is the special one, drop the powerUp
           if (block.isSpecial) {
@@ -260,7 +261,7 @@ function checkCollision(ball) {
             powerUps.push(newPowerUp);
           }
         }
-        if(block.isBad){
+        if (block.isBad) {
           ball.angle = angle;
         }
       }
@@ -269,22 +270,29 @@ function checkCollision(ball) {
       if (block.isActive) {
         block.display();
       }
-    } 
+    }
   }
-  
-    // Adjust the ball's direction after all collisions
+
+  // Adjust the ball's direction after all collisions
   // the adjustY and adjustX logic comes from chatGPT https://chatgpt.com/share/674b4c5e-ffec-8006-bfa8-695afdac74ad
-  
+
   if (adjustY) {
-    ball.directionY();  
+    ball.directionY();
   }
   if (adjustX) {
     ball.directionX();
-  } 
+  }
+}
 
-  
-}   
-  
+function startPage() {
+  rulesButton.display();
+  playButton.display();
+}
+
+function rulesPage() {
+  backButton.display();
+}
+
 function gamePage() {
   //check if the balls hit the blocks
   for (let ball of balls) {
@@ -318,7 +326,7 @@ function gamePage() {
         }
       } else {
         gameState = "game over";
-        console.log("lives");
+        settingUp = true;
       }
     }
     ball.update();
@@ -339,7 +347,7 @@ function gamePage() {
         paddle.smaller();
       } else if (powerUp.type === 2) {
         for (let i = balls.length; i < 3; i++) {
-          balls.push(new Ball(paddle.x, paddle.y-10, randomAngle()));
+          balls.push(new Ball(paddle.x, paddle.y - 10, randomAngle()));
         }
       } else if (powerUp.type === 3) {
         player.life++;
@@ -355,41 +363,74 @@ function gamePage() {
     }
   }
 
-  // re-set just hit flag 
+  // re-set just hit flag
 
-    for (let i = 0; i < columnNumber; i++) {
-      for (let j = 0; j < rowNumber; j++) {
-        blocks[i][j].justHit = false;
-      }
+  for (let i = 0; i < columnNumber; i++) {
+    for (let j = 0; j < rowNumber; j++) {
+      blocks[i][j].justHit = false;
     }
-
+  }
 
   // Audince throwing food
-  if(frameCount % 90 === 0) {
+  if (frameCount % 90 === 0) {
     let newFood = new Food();
     newFood.generate();
     foods.push(newFood);
-  }  
+  }
 
   /* for(let food of foods){
     food.generate;
-  }  */ 
- 
+  }  */
+
   for (let food of foods) {
-  if (food.onPaddle(paddle) === true && food.isActive === true) {
-    food.isActive = false;
-    player.score -= 2; 
+    if (food.onPaddle(paddle) === true && food.isActive === true) {
+      food.isActive = false;
+      player.score -= 2;
+    }
+    if (food.isActive) {
+      food.display();
+      food.update();
+    }
   }
-  if (food.isActive) {
-    food.display();
-    food.update();
-  } 
-}
-       
-    
-  if (allBlocksHit()){
+
+  if (allBlocksHit()) {
     gameState = "game over";
-    console.log("blocks");
+    settingUp = true;
+  }
+}
+
+function leaderBoard() {
+  if (settingUp === true) {
+    nameField = createInput("");
+    nameField.attribute("placeholder", "your name");
+    nameField.position(510, 220);
+    nameField.size(215, 30);
+    settingUp = false;
+  }
+
+  push();
+  //background (250, 100, 100);
+  fill(0, 0, 0);
+  rect(400, 140, 390, 50, 10);
+  fill(255);
+  textSize(40);
+  textAlign(CENTER);
+  textStyle(BOLD);
+  text("LEADER BOARD:", 600, 180);
+  againButton.display();
+  backHomeButton.display();
+  pop();
+
+  for (let winner of winners) {
+    push();
+    fill(255, 255, 255);
+    textFont("Courier New");
+    textStyle(BOLD);
+    textSize(24);
+    text("Player: " + winner.name, 350, 320 + 40 * winners.indexOf(winner));
+    textAlign(RIGHT);
+    text("Score: " + winner.score, 850, 320 + 40 * winners.indexOf(winner));
+    pop();
   }
 }
 
@@ -397,23 +438,25 @@ function draw() {
   noStroke();
   background(220, 255, 255);
 
-push();
+  push();
   for (let i = 1; i < 11; i++) {
     tentBackground(rectX * i, rectY);
   }
   for (let i = 1; i < 6; i++) {
     roofDetailWhite(roofDetailWhiteX * i, roofDetailWhiteY);
   }
-for (let i = 0; i < 6; i++) {
-    roofDetailRed(roofDetailRedX * i, roofDetailRedY); 
-}
+  for (let i = 0; i < 6; i++) {
+    roofDetailRed(roofDetailRedX * i, roofDetailRedY);
+  }
 
-
-roofTop();
-pop();
-
+  roofTop();
+  pop();
 
   if (gameState === "start") {
+    startPage();
+  } else if (gameState === "rules") {
+    rulesPage();
+  } else if (gameState === "load") {
     gridBlocks();
     balls[0] = new Ball(paddle.x, paddle.y - 10, randomAngle());
     gameState = "game";
@@ -424,24 +467,25 @@ pop();
       gameTimer--;
       push();
       fill(0);
-      textFont('Courier New');
-      text("TIMER: " + Math.floor(gameTimer / 30), 50, 50);
-      text("SCORE: " + player.score, 50, 30);
-      
-      //heart emoji is copied and pasted from the internet https://emojipedia.org/red-heart
-      let lives=[];
-      for(let i = 0; i < player.life; i++) {
-        lives[i]="❤️";
-      }
-      text("LIVES: " + lives, 50, 70);
+      textFont("Courier New");
+      textStyle(BOLD);
+      textSize(30);
+      text("TIMER: " + Math.floor(gameTimer / 30), 900, 60);
+      text("SCORE: " + player.score, 900, 100);
 
-      
+      //heart emoji is copied and pasted from the internet https://emojipedia.org/red-heart
+      let lives = [];
+      for (let i = 0; i < player.life; i++) {
+        lives[i] = "❤️";
+      }
+      text("LIVES: " + lives, 50, 60);
+
       pop();
     } else {
       gameState = "game over";
-      console.log("time");
+      settingUp = true;
     }
-  } else if(gameState === "game over"){
+  } else if (gameState === "game over") {
     leaderBoard();
   }
 }
