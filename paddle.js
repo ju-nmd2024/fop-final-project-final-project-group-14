@@ -4,20 +4,20 @@ export default class Paddle {
     this.y = 750;
     this.width = 70;
     this.weight = 15;
-    this.isDifferent = false;
+    this.isDifferent = false; //flag if the paddle is smaller or bigger
     this.timer = 0;
   }
 
   update() {
-    //if(this.x - this.width / 2 >= 110 && this.x + this.width/2 <= 1000){
+    // timer for the powerup and reset size after the timer is done
     if(this.isDifferent){
       this.timer--;
       if(this.timer === 0){
-      this.width = 100;
+      this.width = 70;
     }
     }  
     
-    
+    // movement with keys
     if (keyIsDown(39)) {
       if (this.x <= 1200 - this.width / 2) {
         this.x = this.x + 5;
@@ -28,6 +28,7 @@ export default class Paddle {
       }
     }
 
+    // restrict movement to the tent size
     if(this.x - this.width / 2 <= 100 ) {
       this.x = 100 + this.width/2;
     }
@@ -72,6 +73,6 @@ export default class Paddle {
 
   reset(){
     this.x = 600;
-    this.width = 100;
+    this.width = 70;
   }
 }

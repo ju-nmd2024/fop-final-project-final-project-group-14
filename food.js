@@ -8,7 +8,7 @@ export default class Food {
     this.stepY = 2;
     this.isActive = true;
     this.side = 0;
-    this.number = Math.floor(Math.random() * 3);
+    this.number = Math.floor(Math.random() * 3); //randomly choose between one of the three images 0 = cottonCandy, 1 = soda, 2 = hotDog
     this.cottonCandy = cottonCandy;
     this.soda = soda;
     this.hotDog = hotDog;
@@ -16,12 +16,12 @@ export default class Food {
   }
 
   generate() {
-    this.side = Math.floor(Math.random() * 2);
-    this.y = Math.floor(Math.random() * (700 - 100) + 100);
-    if (this.side === 0) {
+    this.side = Math.floor(Math.random() * 2); //random side 
+    this.y = Math.floor(Math.random() * (700 - 100) + 100); //random restricted height between 100 & 700
+    if (this.side === 0) { // 0 = left, change x and step so it moves to the right
       this.x = 0;
       this.stepX = 3;
-    } else if (this.side === 1) {
+    } else if (this.side === 1) { // 1 = right, change x and step so it moves to the left
       this.x = 1200;
       this.stepX = -3;
     }
@@ -29,11 +29,12 @@ export default class Food {
   }
 
   update() {
-    if (this.number === 2) {
+    if (this.number === 2) { //change sizes for the hotdog
       this.width = 86.6;
       this.height = 34.6;
     }
 
+    //move and change rotation angle
     this.x = this.x + this.stepX;
     this.y = this.y + this.stepY;
     this.angle += 0.1;
@@ -45,7 +46,6 @@ export default class Food {
   display() {
     if (this.isActive === true) {
       push();
-      // translate(-this.width/2, -this.height/2);
       imageMode(CENTER); //ImageMode from p5js website
       translate(this.x, this.y);
       rotate(this.angle);

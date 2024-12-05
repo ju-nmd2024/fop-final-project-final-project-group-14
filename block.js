@@ -26,6 +26,7 @@ export default class Block {
       } else if (this.hitPoint > 3) {
         fill(39, 170, 225);
       }
+      // dont have powerups under the bad blocks
       if (this.isBad) {
         this.isSpecial = false;
         fill(100, 100, 100);

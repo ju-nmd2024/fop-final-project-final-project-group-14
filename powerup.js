@@ -8,7 +8,7 @@ export default class PowerUp {
     }
   
     generate() {
-      this.type = Math.floor(Math.random() * 4);
+      this.type = Math.floor(Math.random() * 4); //randomly decide a type
       this.isActive = false;
     }
   
@@ -19,6 +19,7 @@ export default class PowerUp {
     display() {
       push();
       translate(this.x, this.y);
+      //different colours for different types
       if (this.type === 0) {
         fill(255, 0, 255);
       } else if (this.type === 1) {

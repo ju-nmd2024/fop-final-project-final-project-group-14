@@ -6,43 +6,32 @@ import Food from "./food.js";
 import Player from "./player.js";
 import Button from "./button.js";
 
+// game elements variables
 let paddle = new Paddle(600);
 let player = new Player();
 let blocks = [];
-let balls = [];
-let gameState = "start";
-let gameTimer = 0;
 let rowNumber = 5; //how many rows
 let columnNumber = 10; //how many columns
+let balls = [];
 let powerUps = [];
 let foods = [];
+let gameState = "start";
+let gameTimer = 0;
+
+// images variables
 let titleImage;
 let soda;
 let cottonCandy;
 let hotDog;
 
-// let titleImage = loadImage("Images/Mr.Giffords Aerial Circus v5 Mirrored.png");
+// buttons
 const againButton = new Button(650, 700, 150, 60, "PLAY AGAIN");
 const backHomeButton = new Button(400, 700, 150, 60, "BACK HOME");
 const rulesButton = new Button(400, 600, 150, 60, "RULES");
 const playButton = new Button(650, 600, 150, 60, "PLAY");
 const backButton = new Button(550, 700, 150, 60, "BACK");
 
-function setup() {
-  frameRate(30);
-  createCanvas(1200, 800);
-  background(255, 255, 255);
-}
-window.setup = setup;
-
-function preload() {
-  titleImage = loadImage("Images/Mr.Giffords Aerial Circus v5 Mirrored.png");
-  cottonCandy = loadImage("Images/Cotton Candy.png");
-  soda = loadImage("Images/Soda.png");
-  hotDog = loadImage("Images/Hot Dog.png");
-}
-window.preload = preload;
-
+// background variables
 let rectX = 100;
 let rectY = 250;
 let roofDetailWhiteX = 200;
@@ -51,6 +40,7 @@ let roofDetailRedX = 200;
 let roofDetailRedY = 250;
 let roofPeak = 100;
 
+// leaderboard variables
 let currentPlayer;
 let player1 = new Player("--");
 player1.score = 0;
@@ -90,6 +80,24 @@ let nameField;
 let settingUp = true;
 let nameOk = false;
 
+
+function setup() {
+  frameRate(30);
+  createCanvas(1200, 800);
+  background(255, 255, 255);
+}
+window.setup = setup;
+
+function preload() {
+  titleImage = loadImage("Images/Mr.Giffords Aerial Circus v5 Mirrored.png");
+  cottonCandy = loadImage("Images/Cotton Candy.png");
+  soda = loadImage("Images/Soda.png");
+  hotDog = loadImage("Images/Hot Dog.png");
+}
+window.preload = preload;
+
+
+// change page when click on button
 function mouseClicked() {
   if (gameState === "start") {
     if (playButton.hitTest(mouseX, mouseY)) {
@@ -111,6 +119,7 @@ function mouseClicked() {
 }
 window.mouseClicked = mouseClicked;
 
+// functions for the backgroung graphics
 function tentBackground(rectX, rectY) {
   noStroke();
   fill(70, 10, 10);
@@ -139,7 +148,8 @@ function roofDetailRed(roofDetailRedX, roofDetailRedY) {
   arc(100 + roofDetailRedX, roofDetailRedY, 100, 80, 0, +PI);
 }
 
-//calculates a random angle for the start of the ball
+
+//calculates a random angle for the start of the ball on the paddle
 function randomAngle() {
   return (
     Math.random() * (2 * PI - QUARTER_PI - (PI + QUARTER_PI)) +
@@ -147,18 +157,20 @@ function randomAngle() {
   );
 }
 
+// checks if all the blocks are not active
 function allBlocksHit() {
   let count = 0;
   for (let i = 0; i < columnNumber; i++) {
     for (let j = 0; j < rowNumber; j++) {
       if (blocks[i][j].isActive === false || blocks[i][j].isBad) {
-        count++;
+        count++; //count how many bad and inactive blocks are there
       }
     }
   }
-  return columnNumber * rowNumber === count;
+  return columnNumber * rowNumber === count; // returns whether all the block are deactivated or not
 }
 
+// generates the blocks on the grid, and the arrays with bad (random bounce angle) and special blocks (hidden powerups)
 function gridBlocks() {
   let specialIndexes = [];
   let badIndexes = [];
@@ -173,13 +185,14 @@ function gridBlocks() {
     badIndexes.push(badIndex);
   }
 
-  let count = 0;
+  let count = 0; // start counting the blocks
   for (let i = 0; i < columnNumber; i++) {
     blocks[i] = [];
     for (let j = 0; j < rowNumber; j++) {
       blocks[i][j] = new Block(200 + 80 * i, 350 + 50 * j, rowNumber - 1 - j);
       count++;
-      if (badIndexes.includes(count)) {
+      // if the block number (count) is bad or special, flag the block.
+      if (badIndexes.includes(count)) { // includes() from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
         blocks[i][j].isBad = true;
       }
       if (specialIndexes.includes(count)) {
@@ -189,7 +202,9 @@ function gridBlocks() {
   }
 }
 
+// checks collision between all the blocks and a ball
 function checkCollision(ball) {
+  // variables to adjust the direction (see citation at line 289)
   let adjustX = false;
   let adjustY = false;
   let angle = 0;
@@ -203,7 +218,7 @@ function checkCollision(ball) {
         // flag so you cant hit it repeatedly in same frame
         block.justHit = true;
 
-        if (block.isBad === false) {
+        if (block.isBad === false) { //when the block is not bad, increase the score
           player.score += 5;
           //decrease hit point
           block.hitPoint -= 1;
@@ -223,7 +238,7 @@ function checkCollision(ball) {
           overlapBottom
         );
 
-        //Reposition ball and change of direction
+        //Reposition ball and flag what direction to change and change the angle
         if (minOverlap === overlapTop) {
           adjustY = true;
           ball.y = block.y - ball.r - 1;
@@ -244,7 +259,7 @@ function checkCollision(ball) {
           angle = randomAngle();
         }
 
-        // Deactivate block if no hits left
+        // Deactivate block if no hits left (for good blocks)
         if (block.hitPoint <= 0 && block.isBad === false) {
           block.isActive = false;
           // if the block is the special one, drop the powerUp
@@ -255,10 +270,10 @@ function checkCollision(ball) {
             );
             newPowerUp.generate();
             newPowerUp.isActive = true;
-            powerUps.push(newPowerUp);
+            powerUps.push(newPowerUp); //add powerUps in the array, so more can be displayed at once
           }
         }
-        if (block.isBad) {
+        if (block.isBad) { 
           ball.angle = angle;
         }
       }
@@ -272,7 +287,6 @@ function checkCollision(ball) {
 
   // Adjust the ball's direction after all collisions
   // the adjustY and adjustX logic comes from chatGPT https://chatgpt.com/share/674b4c5e-ffec-8006-bfa8-695afdac74ad
-
   if (adjustY) {
     ball.directionY();
   }
@@ -281,12 +295,14 @@ function checkCollision(ball) {
   }
 }
 
+//start screen graphics and buttons
 function startPage() {
   rulesButton.display();
   playButton.display();
   image(titleImage, 320, 300, 595.3, 251.3);
 }
 
+//rules screen graphics and button
 function rulesPage() {
   push();
   fill(0, 0, 0);
@@ -334,6 +350,7 @@ function rulesPage() {
   backButton.display();
 }
 
+// reset all game things
 function reset() {
   player.life = 3;
   player.score = 0;
@@ -353,12 +370,14 @@ function reset() {
   gameState = "game";
 }
 
+//game screen function
 function gamePage() {
-  //check if the balls hit the blocks
+  //check for each of the balls if they hit the blocks
   for (let ball of balls) {
     checkCollision(ball);
   }
 
+  // paddle
   paddle.display();
   paddle.update();
 
@@ -367,12 +386,12 @@ function gamePage() {
     ball.display();
 
     if (paddle.hit(ball)) {
-      if (ball.hasBounced !== true) {
+      if (ball.hasBounced !== true) { // check if the ball has bounced, so it doesnt bounce when under the paddle
         ball.directionY();
-        ball.hasBounced = true;
+        ball.hasBounced = true; 
       }
     } else {
-      ball.hasBounced = false;
+      ball.hasBounced = false; 
     }
 
     //remove life only when player has 0 balls
@@ -397,6 +416,7 @@ function gamePage() {
   paddle.display();
   paddle.update();
 
+//powerups
   for (let powerUp of powerUps) {
     // catch the powerUp with the paddle
     if (paddle.hit(powerUp) === true && powerUp.isActive === true) {
@@ -408,14 +428,16 @@ function gamePage() {
       } else if (powerUp.type === 1) {
         paddle.smaller();
       } else if (powerUp.type === 2) {
+        //add multiple balls (to get max to 3)
         for (let i = balls.length; i < 3; i++) {
           balls.push(new Ball(paddle.x, paddle.y - 10, randomAngle()));
         }
       } else if (powerUp.type === 3) {
         player.life++;
       }
-
+      //remove from the array of displayed powerups
       powerUps.splice(powerUps.indexOf(powerUp), 1);
+
     } else if (powerUp.y > height) {
       // Remove power-up off screen
       powerUps.splice(powerUps.indexOf(powerUp), 1);
@@ -425,25 +447,22 @@ function gamePage() {
     }
   }
 
-  // re-set just hit flag
-
+  // re-set just hit flag for the next frame
   for (let i = 0; i < columnNumber; i++) {
     for (let j = 0; j < rowNumber; j++) {
       blocks[i][j].justHit = false;
     }
   }
 
-  // Audince throwing food
+  // Audience throwing food at an interval
   if (frameCount % 90 === 0) {
     let newFood = new Food(soda, hotDog, cottonCandy);
     newFood.generate();
     foods.push(newFood);
   }
 
-  /* for(let food of foods){
-    food.generate;
-  }  */
 
+// check if food hits the paddle
   for (let food of foods) {
     if (food.onPaddle(paddle) === true && food.isActive === true) {
       food.isActive = false;
@@ -455,12 +474,14 @@ function gamePage() {
     }
   }
 
+  //eng game when all blocks are eliminated
   if (allBlocksHit()) {
-    gameState = "start";
+    gameState = "game over";
     settingUp = true;
   }
 }
 
+// end screen
 function leaderBoard() {
   push();
   fill(0);
@@ -489,6 +510,7 @@ function leaderBoard() {
   text("LEADER BOARD:", 600, 180);
   pop();
 
+  //display winners names and scores from the array
   for (let winner of winners) {
     push();
     fill(255, 255, 255);
@@ -509,21 +531,22 @@ function leaderBoard() {
 }
 
 function keyPressed() {
-  if (gameState === "game over") {
+  if (gameState === "game over") { //on the last screen anf if the player wrote its name
     if (keyCode === ENTER && nameOk === false) {
-      //save the last player info
+      //save the last player info and put it into the array
       currentPlayer = new Player(nameField.value());
       currentPlayer.score = player.score;
 
       let index;
       for (let winner of winners) {
-        if (winner.score > currentPlayer.score) {
+        if (winner.score > currentPlayer.score) { //fins the current player position on the leaderboard
           index = winners.indexOf(winner) + 1;
         }
       }
       winners.splice(index, 0, currentPlayer);
-      winners.pop();
+      winners.pop(); //remove the player with smaller score
 
+      //remove the text field, so you cannot change name or add more than once
       nameField.remove();
       settingUp = false;
       nameOk = true;
@@ -534,8 +557,9 @@ window.keyPressed = keyPressed;
 
 function draw() {
   noStroke();
-  background(220, 255, 255);
-
+  background(200, 240, 255);
+  
+  //background circus tent
   push();
   for (let i = 1; i < 11; i++) {
     tentBackground(rectX * i, rectY);
@@ -550,6 +574,7 @@ function draw() {
   roofTop();
   pop();
 
+  //game pages
   if (gameState === "start") {
     startPage();
   } else if (gameState === "rules") {
@@ -559,13 +584,15 @@ function draw() {
   } else if (gameState === "game") {
     if (gameTimer > 0) {
       gamePage();
-      gameTimer--;
+      gameTimer--; //decrease timer
+
+      //display timer, lives and score
       push();
       fill(0);
       textFont("Courier New");
       textStyle(BOLD);
       textSize(30);
-      text("TIMER: " + Math.floor(gameTimer / 30), 900, 60);
+      text("TIMER: " + Math.floor(gameTimer / 30), 900, 60); // timer/frameRate = seconds 
       text("SCORE: " + player.score, 900, 100);
 
       //heart emoji is copied and pasted from the internet https://emojipedia.org/red-heart
@@ -576,7 +603,7 @@ function draw() {
       text("LIVES: " + lives, 50, 60);
 
       pop();
-    } else {
+    } else { // game over when the time runs out
       gameState = "game over";
       settingUp = true;
     }

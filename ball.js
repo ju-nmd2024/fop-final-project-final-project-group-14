@@ -12,6 +12,7 @@ export default class Ball {
       this.x = this.x + Math.cos(this.angle) * this.speed;
       this.y = this.y + Math.sin(this.angle) * this.speed;
   
+      // restrict movement to the tent size
       // Left or right wall collision
       if (this.x - this.r < 100 || this.x > 1100 - this.r) {
         this.angle = PI - this.angle;
