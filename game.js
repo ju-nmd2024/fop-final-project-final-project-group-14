@@ -11,13 +11,13 @@ let player = new Player();
 //let food = new Food();
 let blocks = [];
 let balls = [];
-let gameState = "load";
+let gameState = "start";
 let gameTimer = 0;
 let rowNumber = 5;
 let columnNumber = 10;
 let powerUps = [];
 let foods = [];
-let titleImage = loadImage("Images/Mr.Giffords Aerial Circus v5 Mirrored.png");
+// let titleImage = loadImage("Images/Mr.Giffords Aerial Circus v5 Mirrored.png");
 const againButton = new Button(650, 700, 150, 60, "PLAY AGAIN");
 const backHomeButton = new Button(400, 700, 150, 60, "BACK HOME");
 const rulesButton = new Button(400, 600, 150, 60, "RULES");
@@ -30,6 +30,8 @@ function setup() {
   background(255, 255, 255);
 }
 window.setup = setup;
+let titleImage = loadImage("Images/Mr.Giffords Aerial Circus v5 Mirrored.png");
+
 
 let rectX = 100;
 let rectY = 250;
@@ -364,15 +366,12 @@ function gamePage() {
     }
 
     //remove life only when player has 0 balls
+    //issue with multiple balls causing game over fixed with ChatGPT https://chatgpt.com/share/67519a81-6eac-8003-bfda-6e00dc4c33ab
     if (ball.y + ball.r >= 800) {
       if (balls.length > 1) {
         balls.splice(balls.indexOf(ball), 1);
       } else {
-      // if (player.life > 0) {
         if (player.life > 0) {
-        // if (balls.length > 1) {
-          // balls.splice(balls.indexOf(ball), 1);
-        // } else {
           player.loseLife();
           ball.reset();
         
