@@ -15,7 +15,7 @@ let columnNumber = 10; //how many columns
 let balls = [];
 let powerUps = [];
 let foods = [];
-let gameState = "start";
+let gameState = "game over";
 let gameTimer = 0;
 
 // images variables
@@ -494,8 +494,12 @@ function leaderBoard() {
     // text-box input logic from "User Input: Text Fields by Samizdat" https://editor.p5js.org/Samizdat/sketches/eUsieMk6j
     nameField = createInput("");
     nameField.attribute("placeholder", "your name");
-    nameField.position(510, 220);
     nameField.size(215, 30);
+    // position for "your name" box centering issue solved https://chatgpt.com/share/6751dbad-cfbc-8006-96f8-580963bb826e
+    nameField.style('position', 'absolute');
+    nameField.style('left', '50%');
+    nameField.style('top', '50%');
+    nameField.style('transform', 'translate(-50%, -50%) translateY(-140px)');
     settingUp = false;
   }
 
