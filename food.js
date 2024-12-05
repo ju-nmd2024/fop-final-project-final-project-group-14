@@ -20,10 +20,10 @@ export default class Food {
     this.y = Math.floor(Math.random() * (700 - 100) + 100); //random restricted height between 100 & 700
     if (this.side === 0) { // 0 = left, change x and step so it moves to the right
       this.x = 0;
-      this.stepX = 3;
-    } else if (this.side === 1) { // 1 = right, change x and step so it moves to the left
+      this.stepX = 5;
+    } else if (this.side === 1) {
       this.x = 1200;
-      this.stepX = -3;
+      this.stepX = -5;
     }
     this.isActive = true;
   }

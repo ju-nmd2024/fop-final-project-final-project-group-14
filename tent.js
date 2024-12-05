@@ -8,7 +8,7 @@ let roofPeak = 100;
 
 function setup(){
     createCanvas(1200, 800);
-    background(255, 255, 255);
+    // background(255, 255, 255);
 }
  
 function tentBackground(rectX, rectY) {
@@ -43,7 +43,7 @@ function draw () {
     for (let i = 1; i < 11; i++) {
         tentBackground(rectX * i, rectY);
     }
-    for (let i = 0; i < 6; i++) {
+    for (let i = 1; i < 6; i++) {
         roofDetailWhite(roofDetailWhiteX * i, roofDetailWhiteY);
     }
     for (let i = 0; i < 6; i++) {
