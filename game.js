@@ -12,10 +12,12 @@ let player = new Player();
 let blocks = [];
 let balls = [];
 let gameState = "start";
+let gameTimer = 0;
 let rowNumber = 5;
 let columnNumber = 10;
 let powerUps = [];
 let foods = [];
+let titleImage = loadImage("Images/Mr.Giffords Aerial Circus v5 Mirrored.png");
 const againButton = new Button(650, 700, 150, 60, "PLAY AGAIN");
 const backHomeButton = new Button(400, 700, 150, 60, "BACK HOME");
 const rulesButton = new Button(400, 600, 150, 60, "RULES");
@@ -270,6 +272,7 @@ function checkCollision(ball) {
 function startPage() {
   rulesButton.display();
   playButton.display();
+  image(titleImage, 320, 300, 595.3, 251.3);
 }
 
 function rulesPage() {
