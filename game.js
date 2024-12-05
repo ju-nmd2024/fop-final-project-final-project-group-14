@@ -10,10 +10,10 @@ let paddle = new Paddle(600);
 let player = new Player();
 let blocks = [];
 let balls = [];
-let gameState = "start";
+let gameState = "game over";
 let gameTimer = 0;
-let rowNumber = 5; //array for grid of blocks how many rows
-let columnNumber = 10; //array for grid block how many columns
+let rowNumber = 5; //how many rows
+let columnNumber = 10; //how many columns
 let powerUps = [];
 let foods = [];
 let titleImage;

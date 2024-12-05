@@ -8,39 +8,38 @@ export default class Food {
     this.stepY = 2;
     this.isActive = true;
     this.side = 0;
-    this.number = Math.floor(Math.random()*3);
+    this.number = Math.floor(Math.random() * 3);
     this.cottonCandy = cottonCandy;
     this.soda = soda;
     this.hotDog = hotDog;
     this.angle = 0;
   }
 
-  generate(){
-  this.side = Math.floor(Math.random()*2);
-  this.y = Math.floor(Math.random()*(700 - 100) + 100);
+  generate() {
+    this.side = Math.floor(Math.random() * 2);
+    this.y = Math.floor(Math.random() * (700 - 100) + 100);
     if (this.side === 0) {
-        this.x = 0;
-        this.stepX = 3;
-        
-      } else if (this.side === 1) {
-        this.x = 1200;
-        this.stepX = -3;
-      }
-      this.isActive = true;
+      this.x = 0;
+      this.stepX = 3;
+    } else if (this.side === 1) {
+      this.x = 1200;
+      this.stepX = -3;
+    }
+    this.isActive = true;
   }
 
   update() {
     if (this.number === 2) {
       this.width = 86.6;
-      this.height = 34.6;}
-   
-      this.x = this.x + this.stepX;
-      this.y = this.y + this.stepY;
-      this.angle += 0.1;
+      this.height = 34.6;
+    }
 
+    this.x = this.x + this.stepX;
+    this.y = this.y + this.stepY;
+    this.angle += 0.1;
 
     if (this.x < 0 || this.x > 1200) {
-       this.isActive = false;
+      this.isActive = false;
     }
   }
   display() {
@@ -54,7 +53,7 @@ export default class Food {
         image(this.cottonCandy, 0, 0, 53.2, 105);
       } else if (this.number === 1) {
         image(this.soda, 0, 0, 53.6, 91.6);
-      }else if (this.number === 2) {
+      } else if (this.number === 2) {
         image(this.hotDog, 0, 0, 86.6, 34.6);
       }
       // fill(255, 120, 0);
@@ -64,13 +63,12 @@ export default class Food {
   }
 
   //food on paddle collision
-  onPaddle(paddle) {
+  onPaddle(object) {
     return (
-      this.y - this.height/2 <= paddle.y + 10 &&
-      this.y + this.height/2 >= paddle.y - 10 &&
-      this.x - this.width/2 <= paddle.x + paddle.width / 2 &&
-      this.x + this.width/2 >= paddle.x - paddle.width / 2
+      this.y - this.height / 2 <= object.y + 10 &&
+      this.y + this.height / 2 >= object.y - 10 &&
+      this.x - this.width / 2 <= object.x + object.width / 2 &&
+      this.x + this.width / 2 >= object.x - object.width / 2
     );
   }
-
 }
