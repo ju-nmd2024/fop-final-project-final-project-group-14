@@ -17,6 +17,8 @@ let rowNumber = 5;
 let columnNumber = 10;
 let powerUps = [];
 let foods = [];
+let titleImage;
+
 // let titleImage = loadImage("Images/Mr.Giffords Aerial Circus v5 Mirrored.png");
 const againButton = new Button(650, 700, 150, 60, "PLAY AGAIN");
 const backHomeButton = new Button(400, 700, 150, 60, "BACK HOME");
@@ -30,8 +32,11 @@ function setup() {
   background(255, 255, 255);
 }
 window.setup = setup;
-let titleImage = loadImage("Images/Mr.Giffords Aerial Circus v5 Mirrored.png");
 
+function preload() {
+  titleImage = loadImage("Images/Mr.Giffords Aerial Circus v5 Mirrored.png");
+}
+window.preload = preload;
 
 let rectX = 100;
 let rectY = 250;
@@ -153,7 +158,7 @@ function gridBlocks() {
   let specialIndexes = [];
   let badIndexes = [];
   // Generate random indices for special and bad blocks
-  while (specialIndexes.length < 8) {
+  while (specialIndexes.length < 80) {
     let specialIndex = Math.floor(Math.random() * (rowNumber * columnNumber));
     specialIndexes.push(specialIndex);
   }
@@ -339,7 +344,7 @@ function reset() {
 
   gridBlocks();
 
-  gameTimer = 10000;
+  gameTimer = 2700;
   gameState = "game";
 }
 

@@ -2,7 +2,7 @@ export default class Paddle {
   constructor(x) {
     this.x = x;
     this.y = 750;
-    this.width = 100;
+    this.width = 70;
     this.weight = 15;
     this.isDifferent = false;
     this.timer = 0;
@@ -51,13 +51,13 @@ export default class Paddle {
 
   bigger() {
     this.isDifferent = true;
-    this.width = 150;
-    this.timer = 1000;
+    this.width = 140;
+    this.timer = 300;
   }
   smaller() {
     this.isDifferent = true;
     this.width = 50;
-    this.timer = 1000;
+    this.timer = 300;
   }
 
   display() {
