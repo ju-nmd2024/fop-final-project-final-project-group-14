@@ -384,7 +384,7 @@ function gamePage() {
       } else {
         if (player.life > 0) {
           player.loseLife();
-          ball.reset();
+          ball.reset(paddle);
         
       } else {
         gameState = "game over";

@@ -104,7 +104,7 @@ export default class Ball {
     
     }
   
-    reset (){
+    reset (paddle){
           this.x = paddle.x;
           this.y = 740;
           this.angle = randomAngle(); 
