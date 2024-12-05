@@ -18,6 +18,9 @@ let columnNumber = 10;
 let powerUps = [];
 let foods = [];
 let titleImage;
+let soda;
+let cottonCandy;
+let hotDog;
 
 // let titleImage = loadImage("Images/Mr.Giffords Aerial Circus v5 Mirrored.png");
 const againButton = new Button(650, 700, 150, 60, "PLAY AGAIN");
@@ -35,6 +38,9 @@ window.setup = setup;
 
 function preload() {
   titleImage = loadImage("Images/Mr.Giffords Aerial Circus v5 Mirrored.png");
+  cottonCandy = loadImage("Images/Cotton Candy.png");
+  soda = loadImage("Images/Soda.png");
+  hotDog = loadImage("Images/Hot Dog.png");
 }
 window.preload = preload;
 
@@ -430,7 +436,7 @@ function gamePage() {
 
   // Audince throwing food
   if (frameCount % 90 === 0) {
-    let newFood = new Food();
+    let newFood = new Food(soda, hotDog, cottonCandy);
     newFood.generate();
     foods.push(newFood);
   }

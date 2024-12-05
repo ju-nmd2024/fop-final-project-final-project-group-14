@@ -1,5 +1,5 @@
 export default class Food {
-  constructor() {
+  constructor(soda, hotDog, cottonCandy) {
     this.x = 0;
     this.y = 300;
     this.height = 100;
@@ -9,9 +9,9 @@ export default class Food {
     this.isActive = true;
     this.side = 0;
     this.number = Math.floor(Math.random()*3);
-    this.cottonCandy = loadImage("Images/Cotton Candy.png");
-    this.soda = loadImage("Images/Soda.png");
-    this.hotDog = loadImage("Images/Hot Dog.png");
+    this.cottonCandy = cottonCandy;
+    this.soda = soda;
+    this.hotDog = hotDog;
     this.angle = 0;
   }
 
