@@ -107,7 +107,8 @@ export default class Ball {
     reset (paddle){
           this.x = paddle.x;
           this.y = 740;
-          this.angle = randomAngle(); 
+          this.angle = Math.random() * (2 * PI - QUARTER_PI - (PI + QUARTER_PI)) +
+          (PI + QUARTER_PI); 
     }
     //change orizontal direction
     directionX() {
