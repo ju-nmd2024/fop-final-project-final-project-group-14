@@ -15,7 +15,7 @@ let columnNumber = 10; //how many columns
 let balls = [];
 let powerUps = [];
 let foods = [];
-let gameState = "game over";
+let gameState = "start";
 let gameTimer = 0;
 
 // images variables
