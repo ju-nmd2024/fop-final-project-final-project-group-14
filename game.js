@@ -8,13 +8,12 @@ import Button from "./button.js";
 
 let paddle = new Paddle(600);
 let player = new Player();
-//let food = new Food();
 let blocks = [];
 let balls = [];
 let gameState = "start";
 let gameTimer = 0;
-let rowNumber = 5;
-let columnNumber = 10;
+let rowNumber = 5; //array for grid of blocks how many rows
+let columnNumber = 10; //array for grid block how many columns
 let powerUps = [];
 let foods = [];
 let titleImage;

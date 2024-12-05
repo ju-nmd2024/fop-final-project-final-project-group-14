@@ -64,7 +64,7 @@ export default class Food {
   }
 
   //food on paddle collision
-  onPaddle(object) {
+  onPaddle(paddle) {
     return (
       this.y - this.height/2 <= paddle.y + 10 &&
       this.y + this.height/2 >= paddle.y - 10 &&
