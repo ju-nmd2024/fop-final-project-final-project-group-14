@@ -10,7 +10,7 @@ let paddle = new Paddle(600);
 let player = new Player();
 let blocks = [];
 let balls = [];
-let gameState = "game over";
+let gameState = "start";
 let gameTimer = 0;
 let rowNumber = 5; //how many rows
 let columnNumber = 10; //how many columns
@@ -163,7 +163,7 @@ function gridBlocks() {
   let specialIndexes = [];
   let badIndexes = [];
   // Generate random indices for special and bad blocks
-  while (specialIndexes.length < 80) {
+  while (specialIndexes.length < 8) {
     let specialIndex = Math.floor(Math.random() * (rowNumber * columnNumber));
     specialIndexes.push(specialIndex);
   }
