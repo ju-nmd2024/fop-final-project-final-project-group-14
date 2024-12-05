@@ -17,14 +17,14 @@ export default class Block {
       translate(this.x, this.y);
 
       // Different colors for different number of hits needed to deactivate
-      if (this.hitPoint === 1) {
-        fill(255, 255, 255);
+      if (this.hitPoint <= 1) {
+        fill(218, 238, 250);
       } else if (this.hitPoint === 2) {
-        fill(255, 0, 0);
+        fill(142, 205, 238);
       } else if (this.hitPoint === 3) {
-        fill(0, 255, 0);
+        fill(99, 188, 232);
       } else if (this.hitPoint > 3) {
-        fill(0, 0, 255);
+        fill(39, 170, 225);
       }
       if (this.isBad) {
         this.isSpecial = false;

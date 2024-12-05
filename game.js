@@ -11,7 +11,7 @@ let player = new Player();
 //let food = new Food();
 let blocks = [];
 let balls = [];
-let gameState = "start";
+let gameState = "load";
 let gameTimer = 0;
 let rowNumber = 5;
 let columnNumber = 10;
@@ -365,18 +365,23 @@ function gamePage() {
 
     //remove life only when player has 0 balls
     if (ball.y + ball.r >= 800) {
-      if (player.life > 0) {
-        if (balls.length > 1) {
-          balls.splice(balls.indexOf(ball), 1);
-        } else {
+      if (balls.length > 1) {
+        balls.splice(balls.indexOf(ball), 1);
+      } else {
+      // if (player.life > 0) {
+        if (player.life > 0) {
+        // if (balls.length > 1) {
+          // balls.splice(balls.indexOf(ball), 1);
+        // } else {
           player.loseLife();
           ball.reset();
-        }
+        
       } else {
         gameState = "game over";
         settingUp = true;
       }
     }
+  }
     ball.update();
   }
 

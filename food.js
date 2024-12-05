@@ -12,6 +12,7 @@ export default class Food {
     this.cottonCandy = loadImage("Images/Cotton Candy.png");
     this.soda = loadImage("Images/Soda.png");
     this.hotDog = loadImage("Images/Hot Dog.png");
+    this.angle = 0;
   }
 
   generate(){
@@ -35,7 +36,8 @@ export default class Food {
    
       this.x = this.x + this.stepX;
       this.y = this.y + this.stepY;
-    
+      this.angle += 0.1;
+
 
     if (this.x < 0 || this.x > 1200) {
        this.isActive = false;
@@ -44,7 +46,10 @@ export default class Food {
   display() {
     if (this.isActive === true) {
       push();
+      // translate(-this.width/2, -this.height/2);
+      imageMode(CENTER); //ImageMode from p5js website
       translate(this.x, this.y);
+      rotate(this.angle);
       if (this.number === 0) {
         image(this.cottonCandy, 0, 0, 53.2, 105);
       } else if (this.number === 1) {
@@ -58,13 +63,13 @@ export default class Food {
     }
   }
 
-  
+  //food on paddle collision
   onPaddle(object) {
     return (
-      this.y <= paddle.y + 10 &&
-      this.y + this.height >= paddle.y - 10 &&
-      this.x <= paddle.x + paddle.width / 2 &&
-      this.x + this.width >= paddle.x - paddle.width / 2
+      this.y - this.height/2 <= paddle.y + 10 &&
+      this.y + this.height/2 >= paddle.y - 10 &&
+      this.x - this.width/2 <= paddle.x + paddle.width / 2 &&
+      this.x + this.width/2 >= paddle.x - paddle.width / 2
     );
   }
 
