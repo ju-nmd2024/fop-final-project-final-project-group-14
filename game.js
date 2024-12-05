@@ -395,7 +395,7 @@ function gamePage() {
     }
 
     //remove life only when player has 0 balls
-    //issue with multiple balls causing game over fixed with ChatGPT https://chatgpt.com/share/67519a81-6eac-8003-bfda-6e00dc4c33ab
+    //issue with multiple balls causing game over fixed https://chatgpt.com/share/67519a81-6eac-8003-bfda-6e00dc4c33ab
     if (ball.y + ball.r >= 800) {
       if (balls.length > 1) {
         balls.splice(balls.indexOf(ball), 1);
