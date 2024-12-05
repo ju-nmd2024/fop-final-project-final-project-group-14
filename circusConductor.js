@@ -1,6 +1,6 @@
-let conductorX = 100;
-let conductorY = 100;
-let conductorS = 0.35;
+let conductorX = 200;
+let conductorY = 200;
+let conductorS = 2;
 
 function circusConductor(){
 
