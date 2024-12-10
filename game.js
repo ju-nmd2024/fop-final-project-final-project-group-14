@@ -140,12 +140,12 @@ function roofTop() {
 
 function roofDetailWhite(roofDetailWhiteX, roofDetailWhiteY) {
   fill(220, 220, 220);
-  arc(roofDetailWhiteX, roofDetailWhiteY, 100, 80, 0, +PI);
+  arc(roofDetailWhiteX, roofDetailWhiteY, 100, 80, 0, + PI);
 }
 
 function roofDetailRed(roofDetailRedX, roofDetailRedY) {
   fill(100, 10, 10);
-  arc(100 + roofDetailRedX, roofDetailRedY, 100, 80, 0, +PI);
+  arc(100 + roofDetailRedX, roofDetailRedY, 100, 80, 0, + PI);
 }
 
 
