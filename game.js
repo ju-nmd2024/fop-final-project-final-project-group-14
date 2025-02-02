@@ -31,7 +31,7 @@ const backHomeButton = new Button(400, 700, 150, 60, "BACK HOME");
 const rulesButton = new Button(400, 600, 150, 60, "RULES");
 const playButton = new Button(650, 600, 150, 60, "PLAY");
 const backButton = new Button(550, 700, 150, 60, "BACK");
-const resumeButton = new Button(550, 500, 150, 60, "RESUME");
+const resumeButton = new Button(525, 500, 150, 60, "RESUME");
 
 // background variables
 let rectX = 100;
@@ -542,7 +542,7 @@ function leaderBoard() {
 
 
 function keyPressed() {
-  if (key === 'p' || key === 'p') {
+  if (key === 'p') {
       paused = !paused;      
   }
 
