@@ -17,6 +17,7 @@ let powerUps = [];
 let foods = [];
 let gameState = "start";
 let gameTimer = 0;
+let paused = false;
 
 // images variables
 let titleImage;
@@ -30,6 +31,7 @@ const backHomeButton = new Button(400, 700, 150, 60, "BACK HOME");
 const rulesButton = new Button(400, 600, 150, 60, "RULES");
 const playButton = new Button(650, 600, 150, 60, "PLAY");
 const backButton = new Button(550, 700, 150, 60, "BACK");
+const resumeButton = new Button(550, 500, 150, 60, "RESUME");
 
 // background variables
 let rectX = 100;
@@ -115,6 +117,8 @@ function mouseClicked() {
     } else if (backHomeButton.hitTest(mouseX, mouseY)) {
       gameState = "start";
     }
+  } else if (paused && resumeButton.hitTest(mouseX,mouseY)) {
+    paused = false;
   }
 }
 window.mouseClicked = mouseClicked;
@@ -317,7 +321,7 @@ function rulesPage() {
   textFont("Courier New");
   textStyle(BOLD);
   textAlign(LEFT);
-  textSize(20);
+  textSize(16);
   text(
     "Use the arrow keys to move the paddle. Keep the conductor moving and break the blocks. Watch out for grey blocks! They will make the conductor bounce in unexpected directions when hit. Be ready to react quickly!\n\nThroughout the game, items will fall from random blocks.\nCatch them with your paddle, but be carefull...not everything is helpful!",
     150,
@@ -376,6 +380,7 @@ function gamePage() {
   for (let ball of balls) {
     checkCollision(ball);
   }
+
 
   // paddle
   paddle.display();
@@ -534,7 +539,13 @@ function leaderBoard() {
   }
 }
 
+
+
 function keyPressed() {
+  if (key === 'p' || key === 'p') {
+      paused = !paused;      
+  }
+
   if (gameState === "game over") { //on the last screen anf if the player wrote its name
     if (keyCode === ENTER && nameOk === false) {
       //save the last player info and put it into the array
@@ -562,6 +573,23 @@ window.keyPressed = keyPressed;
 function draw() {
   noStroke();
   background(200, 240, 255);
+
+  //pause menu
+  if (paused) {
+    
+    fill(0, 0, 0, 100);
+    rect(0, 0, width, height);
+    
+    fill(255);
+    textSize(50);
+    textAlign(CENTER, CENTER);
+    text("PAUSED", width / 2, height / 2 - 50);
+    textSize(20);
+
+    resumeButton.display();
+    //stops game updates
+    return;
+  }
   
   //background circus tent
   push();
@@ -605,6 +633,7 @@ function draw() {
         lives[i] = "❤️";
       }
       text("LIVES: " + lives, 50, 60);
+      text('Press P to pause', 50, 95);
 
       pop();
     } else { // game over when the time runs out
