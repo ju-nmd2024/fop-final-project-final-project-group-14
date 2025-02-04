@@ -5,6 +5,7 @@ import PowerUp from "./powerup.js";
 import Food from "./food.js";
 import Player from "./player.js";
 import Button from "./button.js";
+import Coin from "./coin.js";
 
 // game elements variables
 let paddle = new Paddle(600);
@@ -18,6 +19,7 @@ let foods = [];
 let gameState = "start";
 let gameTimer = 0;
 let paused = false;
+let Coins = [];
 
 // images variables
 let titleImage;
@@ -484,6 +486,29 @@ function gamePage() {
     gameState = "game over";
     settingUp = true;
   }
+
+  //
+  if (frameCount % 120 === 0) {
+    Coin.push(new Coin());
+
+  }
+
+  for (let i = Coin.length - 1; i >= 0; i--) {
+    let Coin=Coins [i];
+    Coin.update();
+    Coin.display();
+
+    if (Coin.reset(paddle)) {
+      player.score += 10;
+      Coin.active = false;
+    }
+
+    if (Coin.y + Coin.r >=800) {
+      Coin.splice(i, 1);
+      Coin.push(new Coin());
+    }
+
+  }
 }
 
 // end screen
@@ -542,10 +567,6 @@ function leaderBoard() {
 
 
 function keyPressed() {
-  if (key === 'p') {
-      paused = !paused;      
-  }
-
   if (gameState === "game over") { //on the last screen anf if the player wrote its name
     if (keyCode === ENTER && nameOk === false) {
       //save the last player info and put it into the array
@@ -567,6 +588,9 @@ function keyPressed() {
       nameOk = true;
     }
   }
+  if (keyCode === 'p') {
+    paused = !paused;      
+  }
 }
 window.keyPressed = keyPressed;
 
@@ -577,17 +601,17 @@ function draw() {
   //pause menu
   if (paused) {
     
-    fill(0, 0, 0, 100);
+    fill(0, 0, 0, 200);
     rect(0, 0, width, height);
-    
+
+    resumeButton.display();
+
     fill(255);
     textSize(50);
     textAlign(CENTER, CENTER);
     text("PAUSED", width / 2, height / 2 - 50);
     textSize(20);
 
-    resumeButton.display();
-    //stops game updates
     return;
   }
   
