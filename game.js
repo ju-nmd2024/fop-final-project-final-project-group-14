@@ -503,9 +503,9 @@ function gamePage() {
       Coin.active = false;
     }
 
-    if (Coin.y + Coin.r >=800) {
-      Coin.splice(i, 1);
-      Coin.push(new Coin());
+    if (coins.y[i] + Coin.r[i] >=800) {
+      Coins.splice(i, 1);
+      coins.push(new Coin());
     }
 
   }
