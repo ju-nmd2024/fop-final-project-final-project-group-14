@@ -56,8 +56,7 @@ export default class Food {
       } else if (this.number === 2) {
         image(this.hotDog, 0, 0, 86.6, 34.6);
       }
-      // fill(255, 120, 0);
-      // ellipse(0, 0, this.r * 2);
+      
       pop();
     }
   }

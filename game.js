@@ -487,25 +487,26 @@ function gamePage() {
     settingUp = true;
   }
 
-  //
+  //loop and array for falling coins
   if (frameCount % 120 === 0) {
-    Coin.push(new Coin());
+    Coins.push(new Coin());
 
   }
 
-  for (let i = Coin.length - 1; i >= 0; i--) {
-    let Coin=Coins [i];
-    Coin.update();
-    Coin.display();
+  for (let i = Coins.length - 1; i >= 0; i--) {
+    let coin=Coins [i];
+    coin.update();
+    coin.display();
 
-    if (Coin.reset(paddle)) {
+    if (coin.reset(paddle)) {
       player.score += 10;
-      Coin.active = false;
+      //Collision with paddle being checked again https://chatgpt.com/share/67a24d3e-5b1c-8003-95fd-32d19fef84a2
+      Coins.splice(i, 1);
     }
 
-    if (coins.y[i] + Coin.r[i] >=800) {
+    if (coin.y + coin.r >= 800) {
       Coins.splice(i, 1);
-      coins.push(new Coin());
+      Coins.push(new Coin());
     }
 
   }
@@ -588,7 +589,7 @@ function keyPressed() {
       nameOk = true;
     }
   }
-  if (keyCode === 'p') {
+  if (key === 'p') {
     paused = !paused;      
   }
 }
@@ -601,16 +602,17 @@ function draw() {
   //pause menu
   if (paused) {
     
-    fill(0, 0, 0, 200);
+    fill(0, 0, 0, 10);
     rect(0, 0, width, height);
-
-    resumeButton.display();
 
     fill(255);
     textSize(50);
     textAlign(CENTER, CENTER);
     text("PAUSED", width / 2, height / 2 - 50);
     textSize(20);
+    text("Press P or the resum button to continue", width / 2, height / 2 + 50)
+    resumeButton.display();
+
 
     return;
   }
