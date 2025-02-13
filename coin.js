@@ -28,8 +28,8 @@ export default class Coin {
   
   }
 
-  //reset coin on paddle
-  reset(paddle) {
+  //collision coin on paddle
+  collision(paddle) {
     return (this.y + this.r >= paddle.y && this.x > paddle.x - paddle.width / 2 && this.x < paddle.x + paddle.width / 2);
 
   }

@@ -19,7 +19,7 @@ let foods = [];
 let gameState = "start";
 let gameTimer = 0;
 let paused = false;
-let Coins = [];
+let coins = [];
 
 // images variables
 let titleImage;
@@ -489,24 +489,24 @@ function gamePage() {
 
   //loop and array for falling coins
   if (frameCount % 120 === 0) {
-    Coins.push(new Coin());
+    coins.push(new Coin());
 
   }
 
-  for (let i = Coins.length - 1; i >= 0; i--) {
-    let coin=Coins [i];
+  for (let i = coins.length - 1; i >= 0; i--) {
+    let coin = coins [i];
     coin.update();
     coin.display();
 
-    if (coin.reset(paddle)) {
+    if (coin.collision(paddle)) {
       player.score += 10;
       //Collision with paddle being checked again https://chatgpt.com/share/67a24d3e-5b1c-8003-95fd-32d19fef84a2
-      Coins.splice(i, 1);
+      coins.splice(i, 1);
     }
 
     if (coin.y + coin.r >= 800) {
-      Coins.splice(i, 1);
-      Coins.push(new Coin());
+      coins.splice(i, 1);
+      coins.push(new Coin());
     }
 
   }
@@ -568,6 +568,7 @@ function leaderBoard() {
 
 
 function keyPressed() {
+
   if (gameState === "game over") { //on the last screen anf if the player wrote its name
     if (keyCode === ENTER && nameOk === false) {
       //save the last player info and put it into the array
@@ -589,6 +590,7 @@ function keyPressed() {
       nameOk = true;
     }
   }
+
   if (key === 'p') {
     paused = !paused;      
   }
@@ -612,7 +614,7 @@ function draw() {
     textSize(20);
     text("Press P or the resum button to continue", width / 2, height / 2 + 50)
     resumeButton.display();
-
+    
 
     return;
   }
@@ -669,5 +671,7 @@ function draw() {
   } else if (gameState === "game over") {
     leaderBoard();
   }
+
+  
 }
 window.draw = draw;
